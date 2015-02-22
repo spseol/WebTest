@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <title>WebTest{% block title %}{% endblock %}</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" 
+                     href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="shortcut icon" 
+                     href="{{ url_for('static', filename='favico.png') }}" />
+
+  <!--[if IE]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  {% block head %}{% endblock %} 
+</head>
+
+<body>
+
+  <header role="banner">
+  {% block header %}
+
+    <p class="inout">
+      {% if 'student' in session %}
+      student: <a href="{{url_for('login')}}">{{session.student}}</a>, 
+                                  <a href="{{url_for('logout')}}">odhlásit</a>
+      {% elif 'ucitel' in session %}
+      učitel: <a href="{{url_for('login')}}">{{session.ucitel}}</a>,
+                                  <a href="{{url_for('logout')}}">odhlásit</a>
+      {% endif %}
+    </p>
+
+    <h1>
+      <a href="{{url_for('index')}}">
+        <img src="{{url_for('static', filename="logo.png")}}" alt=""
+         width="89" height="89" />
+        WebTest</a>
+      <span class="bar0"></span><span class="bar1"></span><span class="bar2"></span><span class="bar3"></span><span class="bar4"></span><span class="bar5"></span><span class="bar6"></span>
+    </h1>
+
+    <nav role="navigation">
+    {% block menu %}
+      <ul>
+        <li><a href="#">Jabka</a></li>
+        <li><a href="#">Hrušky</a></li>
+        <li><a href="#">Zelí</a></li>
+      </ul>
+    {% endblock menu %}
+    </nav>
+  {% endblock header %}
+  </header>
+
+<main role="main">
+{% block main %}
+
+    <article>
+
+			<h1>My article</h1>
+
+      <nav role="navigation">
+      </nav>
+
+			<p>Content</p>
+
+		</article>
+	
+		<aside>
+			<p>More information</p>
+		</aside>
+
+{% endblock main %}
+</main>
+
+
+{% block footer %}
+  <footer>
+    <p>Powered by: 
+    <a href="http://linux.cz">Linux</a>, 
+    <a href="http://python.org">Python</a>, 
+    <a href="http://flask.pocoo.org/">Flask</a>
+    </p>
+  </footer>
+{% endblock footer %}
+
+</body>
+</html>

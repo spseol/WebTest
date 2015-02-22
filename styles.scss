@@ -1,0 +1,164 @@
+/*@import "compass/reset";*/
+@import 'reset.css';
+@import 'semantic.gs/stylesheets/scss/grid.scss';
+
+@import "compass/css3";
+@import "compass/typography/lists/horizontal-list";
+
+@import url(http://fonts.googleapis.com/css?family=Bree+Serif&subset=latin,latin-ext);
+@import url(http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic&subset=latin,latin-ext);
+
+
+//////////
+// GRID //
+//////////
+// Specify the number of columns and set column and gutter widths
+$columns: 12;
+$column-width: 60;
+$gutter-width: 20;
+
+// Remove the definition below for a pixel-based layout
+$total-width: 100%;
+
+
+$zelena: #44A72C ;
+$oranzova: #FF8D00;
+
+$font_text: 'Lora', Georgia, "Times New Roman", "DejaVu Serif", serif;
+/*$font_text: "Times New Roman", "DejaVu Serif", serif;*/
+$font_nadpis: 'Bree serif', Georgia, "Times New Roman", "DejaVu Serif", serif;
+
+////////////
+// LAYOUT //
+////////////
+
+strong { 
+    font-weight: bold;
+}
+em {
+    font-style:italic;
+}
+
+body {
+    font-family: $font_text;
+    font-size: 14pt;
+    max-width: 960px;
+    margin: 1ex auto;
+    border: $oranzova solid 3px;
+    @include border-radius(15px);
+    padding: 1ex 1em;
+    overflow: auto;
+}
+
+header {
+    font-family: $font_nadpis;
+    border-bottom: solid $oranzova 2px;
+    padding-bottom: 1ex;
+    margin-bottom: 1em;
+    a {
+        text-decoration: none;
+        color: $oranzova;
+    }
+    h1 {
+        font-size: 250%;
+        font-weight: bold;
+        padding: 0px;
+    }
+    img {
+        vertical-align: middle;
+    }
+    ul {
+        @include push(3);
+        display: inline;
+    }
+    li {
+        display: inline-block;
+        margin: 0px 5px;
+        a {
+            display: inline-block;
+            padding: 5px 7px 2px;
+            text-decoration: overline;
+        }
+    }
+    li:hover {
+        a {
+            text-decoration: underline;
+        }
+    }
+}
+
+main {
+    line-height: normal;
+    h1, h2, h3, h4, h5, h6 {
+        font-family: $font_nadpis;
+        font-weight: bold;
+        color: $oranzova;
+        margin-top: 1em;
+        margin-bottom: 1ex;
+    }
+    h1 {
+        font-size: 200%;
+    }
+    ul {
+        margin: 0.5ex 0px  0.5ex 40px  ;
+        li {
+            list-style-type: disc;
+        }
+    }
+    p {
+        margin: 0.5ex 0px  0.5ex 0px  ;
+    }
+}
+
+footer {
+    font-family: $font_nadpis;
+    font-size: 77%;
+    text-align: right;
+    border-top: solid $oranzova 1px;
+    margin-top: 1em;
+    padding-top: 1ex;
+    a {
+        color: $oranzova;
+    }
+}
+
+.login {
+    text-align: right;
+    @include pull(4);
+    line-height: 150%;
+}
+
+.inout {
+    float: right;
+    text-align: right;
+    @include push(4);
+    a:hover {
+        text-decoration: underline;
+    }
+    
+}
+
+.bar {
+    background-color: $oranzova;
+    width: 10px;
+    display: inline-block;
+    padding: 0px;
+    margin: 1px;
+}
+.bar0 { @extend .bar; height: 22px; }
+.bar1 { @extend .bar; height: 11px; }
+.bar2 { @extend .bar; height: 40px; }
+.bar3 { @extend .bar; height: 60px; }
+.bar4 { @extend .bar; height: 30px; }
+.bar5 { @extend .bar; height: 17px; }
+.bar6 { @extend .bar; height: 50px; }
+
+.clear {
+    clear: both;
+}
+
+
+/*@import 'responsive';*/
+
+
+// vim:tabstop=4:shiftwidth=4
