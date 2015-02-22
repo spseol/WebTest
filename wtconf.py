@@ -3,7 +3,7 @@
 # Úloha:   konfigurace pro WebTest
 ############################################################################
 
-"Přihlašovací údaje k databázy."
+"Přihlašovací údaje k databázi."
 DB = {
     "host": "localhost",
     "user": "webtest",
