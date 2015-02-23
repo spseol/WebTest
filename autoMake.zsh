@@ -8,6 +8,23 @@
 setopt extendedglob # **/*.txt
 setopt re_match_pcre 
 
+if [ $1 = '-h' ]; then
+    cat <<EOF 
+    
+    $(basename $0) [XID]
+
+        Skript sleduje pracovní adresář a pokud v něm dojde ke změně 
+        nějakého souboru, sputí kompilaci SCSS a pošle do okna 
+        prohlížeče stisk F5.
+
+        Pokud není zadáno XID je nuté po spuštění kliknou na okno 
+        prohlížeče aby skript věděl, do kterého okna se má 
+        stisk F5 posílat.
+
+EOF
+    exit 0
+fi
+
 # načtu XID okna jako parametr z příkazové řádky
 if [ $1 ] && [ $1 != 'x' ]; then 
     if [[ $1 =~ '^[\da-fA-F]+$' ]]; then
