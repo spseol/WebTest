@@ -58,3 +58,15 @@ Databáze
 --------
 
 * [ERD]() databáze: <https://editor.ponyorm.com/user/tlapicka/WebTest>.
+
+Vzhled a CSS
+------------
+
+Pro tvorbu vzhledu je použit:
+* [SASS](http://sass-lang.com/guide)
+* [Semantic](http://semantic.gs/)
+* [Compass](http://compass-style.org/)
+
+Pomocný Skript `autoMake.zsh` sleduje pomocí `inotify` adresř a pokud
+se nějaký soubor změní, provede se kompilace `scss` a pomocí `xdotool`
+se reloadne prohlížeč.
