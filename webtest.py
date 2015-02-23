@@ -18,7 +18,6 @@ import os
 import functools
 from crypt import crypt
 from wtdb import Student, Ucitel
-from pony.orm import db_session
 
 import sys
 reload(sys)  # to enable `setdefaultencoding` again

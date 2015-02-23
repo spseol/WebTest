@@ -19,10 +19,13 @@ em {
   font-style: italic; }
 
 body {
-  font-family: "Lora", Georgia, "Times New Roman", "DejaVu Serif", serif;
-  font-size: 14pt;
   max-width: 960px;
   margin: 1ex auto;
+  overflow: hidden; }
+
+#body {
+  font-family: "Lora", Georgia, "Times New Roman", "DejaVu Serif", serif;
+  font-size: 14pt;
   border: #FF8D00 solid 3px;
   -moz-border-radius: 15px;
   -webkit-border-radius: 15px;
@@ -45,11 +48,11 @@ header {
   header img {
     vertical-align: middle; }
   header ul {
-    margin-left: 26.04167%;
+    margin-left: 17.70833%;
     display: inline; }
   header li {
     display: inline-block;
-    margin: 0px 5px; }
+    margin: 5px 5px; }
     header li a {
       display: inline-block;
       padding: 5px 7px 2px;
@@ -91,9 +94,9 @@ footer {
 
 .inout {
   float: right;
-  text-align: right;
-  margin-left: 34.375%; }
-  .inout a:hover {
+  text-align: right; }
+  .inout margin-right
+  a:hover {
     text-decoration: underline; }
 
 .bar, .bar0, .bar1, .bar2, .bar3, .bar4, .bar5, .bar6 {

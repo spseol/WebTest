@@ -1,7 +1,8 @@
-*.swp
 venv
-wtconf.py
+#wtconf.py
 
+# VIm
+*.swp
 # sass
 .sass-cache
 static/styles.css.map
