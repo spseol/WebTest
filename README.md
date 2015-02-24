@@ -76,15 +76,15 @@ devtools
 V adresáři `devtools/` je několik pomocných skriptů, které mají usnadnit vývoj
 a práci s lokální databází.
 
-* `devtools/autoMakeF5.zsh`: při změně souborů automaticky odesílá 
+* `autoMakeF5.zsh`: při změně souborů automaticky odesílá 
    do prohlížeče stisk F5.
-* `devtools/create-psql.usr.db`: vytvoří v PostgreSQL uživatele a založí mu 
+* `create-psql.usr.db`: vytvoří v PostgreSQL uživatele a založí mu 
    databázi.
-* `devtools/drop-psql.usr.db`: zruší v PostgreSQL uživatele a všechny jeho 
+* `drop-psql.usr.db`: zruší v PostgreSQL uživatele a všechny jeho 
    databáze.
-* `devtools/db-insert_dev_data.py`: vloží do vývojové databáze počáteční data.
-* `devtools/db-drop_create_insert.zsh`: vývojovou databázi zruší, znovu vytvoří
+* `db-insert_dev_data.py`: vloží do vývojové databáze počáteční data.
+* `db-drop_create_insert.zsh`: vývojovou databázi zruší, znovu vytvoří
    a vloží do ní počáteční data.
-* `devtools/devserver.zsh`: spustí vývojový server.
+* `devserver.zsh`: spustí vývojový server.
 
 
