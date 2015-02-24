@@ -58,6 +58,7 @@ Databáze
 --------
 
 * [ERD]() databáze: <https://editor.ponyorm.com/user/tlapicka/WebTest>.
+* Definice databázových tabulek je v modulu `wtdb.py`.
 
 Vzhled a CSS
 ------------
@@ -67,6 +68,25 @@ Pro tvorbu vzhledu je použit:
 * [Semantic](http://semantic.gs/)
 * [Compass](http://compass-style.org/)
 
-Pomocný Skript `autoMake.zsh` sleduje pomocí `inotify` adresř a pokud
+Pomocný Skript `devtools/autoMakeF5.zsh` sleduje pomocí `inotify` adresář a pokud
 se nějaký soubor změní, provede se kompilace `scss` a pomocí `xdotool`
-se reloadne prohlížeč.
+se do prohlížeče odešle stisk F5.
+
+devtools
+-----------
+
+V adresáři `devtools/` je několik pomocných skriptů, které mají usnadnit vývoj
+a práci s lokální databází.
+
+* `devtools/autoMakeF5.zsh`: při změně souborů automaticky odesílá 
+   do prohlížeče stisk F5.
+* `devtools/create-psql.usr.db`: vytvoří v PostgreSQL uživatele a založí mu 
+   databázi.
+* `devtools/drop-psql.usr.db`: zruší v PostgreSQL uživatele a všechny jeho 
+   databáze.
+* `devtools/db-insert_dev_data.py`: vloží do vývojové databáze počáteční data.
+* `devtools/db-drop_create_insert.zsh`: vývojovou databázi zruší, znovu vytvoří
+   a vloží do ní počáteční data.
+* `devtools/devserver.zsh`: spustí vývojový server.
+
+

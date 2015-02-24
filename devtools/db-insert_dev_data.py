@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 # Soubor:  create_dev_users.py
 # Datum:   22.02.2015 18:41

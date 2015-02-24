@@ -65,6 +65,7 @@ class Otazka(db.Entity):
     * typ_otazky: Otevřená, Uzavřená, Hodnota, Vzorec"""
     _table_ = "otazka"
     id = PrimaryKey(int, column="id_otazka", auto=True)
+    jmeno = Required(unicode, 80)
     otazky_testuu = Set("Otazka_testu")
     obecne_zadani = Required(unicode)
     typ_otazky = Required(str, 1, sql_type="char")
