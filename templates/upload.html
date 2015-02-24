@@ -7,22 +7,23 @@
   <p>Na tomto místě můžete hromadně vložit několik úloh nebo celý test.
   Formát souboru viz příklad uvedený pod formulářem.</p>
 
-  <h2>Odeslat soubor</h2>
-
-  <select>
-{#    výběr jestli se  jen přidají otázky, nebo se rovnouvytvoří celý test   #}
-  </select>
-
-   toto jsem sem jen nakopíroval někde z Internetu
+  <h2>Vybrat  a odeslat soubor</h2>
 
   <form enctype="multipart/form-data" method="post">
+
+    <p>
+    <input type="radio" name="typ" value="otazky" checked="checked" /> 
+    Chci vložit jen testové otázky <br />
+    <input type="radio" name="typ" value="test" />
+    Chci vložit celý test a označit tento test jménem: 
+    <input type="input" name="jmeno_testu" />
+    </p>
+
   <p>
-  Please specify a file, or a set of files:<br>
-  <input type="file" name="datafile" size="40">
+  Vyberte soubor: <input type="file" name="datafile" size="40"><br />
+  <br />
+  Odešlete soubor:<input type="submit" value="Odeslat">
   </p>
-  <div>
-  <input type="submit" value="Odeslat">
-  </div>
   </form>
 
   <h2>Příklad</h2>
