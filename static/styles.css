@@ -18,10 +18,16 @@ strong {
 em {
   font-style: italic; }
 
+pre, code {
+  background-color: #fafafa;
+  font-family: monospace; }
+
+pre {
+  padding: 5px; }
+
 body {
   max-width: 960px;
-  margin: 1ex auto;
-  overflow: hidden; }
+  margin: 1ex auto; }
 
 #body {
   font-family: "Lora", Georgia, "Times New Roman", "DejaVu Serif", serif;
@@ -48,7 +54,7 @@ header {
   header img {
     vertical-align: middle; }
   header ul {
-    margin-left: 17.70833%;
+    margin-left: 9.375%;
     display: inline; }
   header li {
     display: inline-block;
@@ -70,6 +76,10 @@ main {
     margin-bottom: 1ex; }
   main h1 {
     font-size: 200%; }
+  main h2 {
+    font-size: 140%; }
+  main h3 {
+    font-size: 111%; }
   main ul {
     margin: 0.5ex 0px 0.5ex 40px; }
     main ul li {

@@ -1,0 +1,50 @@
+{% extends "ucitel.html" %}
+
+{% block main %}
+<article>
+  <h1>Upload</h1>
+
+  <p>Na tomto místě můžete hromadně vložit několik úloh nebo celý test.
+  Formát souboru viz příklad uvedený pod formulářem.</p>
+
+  <h2>Odeslat soubor</h2>
+
+  <select>
+{#    výběr jestli se  jen přidají otázky, nebo se rovnouvytvoří celý test   #}
+  </select>
+
+   toto jsem sem jen nakopíroval někde z Internetu
+
+  <form enctype="multipart/form-data" method="post">
+  <p>
+  Please specify a file, or a set of files:<br>
+  <input type="file" name="datafile" size="40">
+  </p>
+  <div>
+  <input type="submit" value="Odeslat">
+  </div>
+  </form>
+
+  <h2>Příklad</h2>
+  <pre><code>::task Dělič I.
+Vypočítejte výstupní napětí nezatíženého děliče 
+$R_1=4,2k\Omega$, $R_2=4,2k\Omega$, kde vstupní napětí $U_1=12V$.
+::close
+:- 12V
+:- -12V
+:+ 6V
+:- 0V
+
+::task Dělič II.
+Vypočítejte výstupní napětí nezatíženého děliče $R_1=4,2k\Omega$, 
+$R_2=4,2k\Omega$, kde vstupní napětí $U_1=12V$.
+::number 6,000 0,010
+
+::task Dělič III.
+Vypočítejte výstupní napětí nezatíženého děliče $R_1=4,2k\Omega$,
+$R_2=4,2k\Omega$, kde vstupní napětí $U_1=12V$.
+::open
+  </code></pre>
+
+</article>
+{% endblock main %}

@@ -107,6 +107,13 @@ def logout():
     elif 'ucitel' in session:
         session.pop('ucitel', None)
     return redirect(url_for('login'))
+
+
+@app.route('/upload/', methods=['GET'])
+def upload():
+    return render_template('upload.html')
+
+
 ############################################################################
 
 

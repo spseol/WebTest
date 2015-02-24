@@ -16,8 +16,6 @@ zaměřuje hlavně na (elektro-)technické úlohy. Tento projekt nabízí:
 Příklad zápisu úlohy
 --------------------
 
-    ::date 30.10.2014 14:00 4.11.2014 15:00
-
     ::task Dělič I.
     Vypočítejte výstupní napětí nezatíženého děliče 
     $R_1=4,2k\Omega$, $R_2=4,2k\Omega$, kde vstupní napětí $U_1=12V$.

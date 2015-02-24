@@ -39,10 +39,17 @@ em {
     font-style:italic;
 }
 
+pre, code {
+    background-color: #fafafa;
+    font-family: monospace;
+}
+pre {
+    padding: 5px;
+}
+
 body {
     max-width: 960px;
     margin: 1ex auto;
-	overflow: hidden;
 }
 #body {
     font-family: $font_text;
@@ -71,7 +78,7 @@ header {
         vertical-align: middle;
     }
     ul {
-        @include push(2);
+        @include push(1);
         display: inline;
     }
     li {
@@ -101,6 +108,12 @@ main {
     }
     h1 {
         font-size: 200%;
+    }
+    h2 {
+        font-size: 140%;
+    }
+    h3 {
+        font-size: 111%;
     }
     ul {
         margin: 0.5ex 0px  0.5ex 40px  ;
