@@ -46,7 +46,7 @@ while true; do
     radek=$[ $radek + 1 ]
     inotifywait -r -e modify . --exclude '^\..+\.swp$'
     scss --compass styles.scss static/styles.css
-#    sleep 1s
+    sleep 1s
     if [ $winID ]; then
         xdotool key --window $winID F5  
     fi

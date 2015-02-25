@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf8 -*-
 # Soubor:  webtest.py
 # Datum:   22.02.2015 16:35
@@ -7,17 +8,18 @@
 from __future__ import division, print_function, unicode_literals
 ############################################################################
 
-from flask import (Flask, render_template, Markup, request,
-                   url_for, redirect, session, )
+from flask import (Flask, render_template,
+                   # Markup,
+                   request, url_for, redirect, session, )
 from werkzeug.routing import BaseConverter
-from typogrify.filters import typogrify
-from pony.orm import (sql_debug, get, select, db_session)
-from markdown import markdown
-from datetime import datetime
+# from typogrify.filters import typogrify
+# from markdown import markdown
+from pony.orm import (sql_debug, get, db_session)
+# from datetime import datetime
 import os
 import functools
 from crypt import crypt
-from wtdb import Student, Ucitel
+from wtdb import Student, Ucitel, Otazka
 
 import sys
 reload(sys)  # to enable `setdefaultencoding` again
@@ -156,14 +158,62 @@ def testy():
 
 
 @app.route('/pridat/otazku/', methods=['GET', 'POST'])
-# @prihlasit('ucitel')
+@prihlasit('ucitel')
 def pridat_otazku():
-    if request.method == 'GET':
+    r = request
+    r.f = r.form
+    if r.method == 'GET':
         return render_template('pridat_otazku.html')
-    elif request.method == 'POST':
-        if request.form['jmeno'] and request.form['typ_otazky']  \
-           and request.form['obecne_zadani']:
-            return render_template('pridat_otazku.html')
+    elif r.method == 'POST':
+        if r.f['jmeno'] and r.f['typ_otazky'] and r.f['obecne_zadani']:
+            if r.f['typ_otazky'] == 'O':
+                with db_session:
+                    Otazka(ucitel=get(u for u in Ucitel
+                                      if u.login == session['ucitel']),
+                           jmeno=r.f['jmeno'],
+                           typ_otazky='O',
+                           obecne_zadani=r.f['obecne_zadani'])
+                return redirect(url_for('pridat_otazku'))
+            elif r.f['typ_otazky'] == 'C' and r.f['spravna_odpoved']:
+                with db_session:
+                    Otazka(ucitel=get(u for u in Ucitel
+                                      if u.login == session['ucitel']),
+                           jmeno=r.f['jmeno'],
+                           typ_otazky='C',
+                           obecne_zadani=r.f['obecne_zadani'],
+                           spravna_odpoved=r.f['spravna_odpoved'])
+                return redirect(url_for('pridat_otazku'))
+            elif r.f['typ_otazky'] == 'U' and r.f['spravna_odpoved']:
+                # Musím dát všechny špatné odpovědi těsně za sebe
+                KLICE = ('spatna_odpoved1', 'spatna_odpoved2',
+                         'spatna_odpoved3', 'spatna_odpoved4',
+                         'spatna_odpoved5', 'spatna_odpoved6')
+                odpovedi = []
+                for klic in KLICE:
+                    if r.f[klic]:
+                        odpovedi.append(r.f[klic])
+                parametry = {}
+                i = 0
+                for odpoved in odpovedi:
+                    parametry[KLICE[i]] = odpoved
+                    i += 1
+                # Chce to alespoň jednu špatnou odpověď
+                if len(parametry) < 1:
+                    zprava = "... alespoň jednu špatnou odpověď!"
+                    return render_template('pridat_otazku.html', zprava=zprava)
+                with db_session:
+                    Otazka(ucitel=get(u for u in Ucitel
+                                      if u.login == session['ucitel']),
+                           jmeno=r.f['jmeno'],
+                           typ_otazky='U',
+                           obecne_zadani=r.f['obecne_zadani'],
+                           spravna_odpoved=r.f['spravna_odpoved'],
+                           **parametry)
+                return redirect(url_for('pridat_otazku'))
+            else:
+                zprava = "U číselné otázky musí být zadán správná odpověď."\
+                         " U uzavrené otázky i špatná odpověď."
+                return render_template('pridat_otazku.html', zprava=zprava)
         else:
             zprava = "Nebyla zadána všechna požadovaná data."
             return render_template('pridat_otazku.html', zprava=zprava)

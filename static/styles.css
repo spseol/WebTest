@@ -27,26 +27,26 @@ pre {
 
 body {
   max-width: 960px;
-  margin: 1ex auto; }
+  margin: 1ex auto;
+  overflow: auto; }
 
 #body {
   font-family: "Lora", Georgia, "Times New Roman", "DejaVu Serif", serif;
   font-size: 14pt;
-  border: #FF8D00 solid 3px;
+  border: #DD5500 solid 3px;
   -moz-border-radius: 15px;
   -webkit-border-radius: 15px;
   border-radius: 15px;
-  padding: 1ex 1em;
-  overflow: auto; }
+  padding: 1ex 1em; }
 
 header {
   font-family: "Bree serif", Georgia, "Times New Roman", "DejaVu Serif", serif;
-  border-bottom: solid #FF8D00 2px;
+  border-bottom: solid #DD5500 2px;
   padding-bottom: 1ex;
   margin-bottom: 1em; }
   header a {
     text-decoration: none;
-    color: #FF8D00; }
+    color: #DD5500; }
   header h1 {
     font-size: 250%;
     font-weight: bold;
@@ -71,7 +71,7 @@ main {
   main h1, main h2, main h3, main h4, main h5, main h6 {
     font-family: "Bree serif", Georgia, "Times New Roman", "DejaVu Serif", serif;
     font-weight: bold;
-    color: #FF8D00;
+    color: #DD5500;
     margin-top: 1em;
     margin-bottom: 1ex; }
   main h1 {
@@ -91,11 +91,11 @@ footer {
   font-family: "Bree serif", Georgia, "Times New Roman", "DejaVu Serif", serif;
   font-size: 77%;
   text-align: right;
-  border-top: solid #FF8D00 1px;
+  border-top: solid #DD5500 1px;
   margin-top: 1em;
   padding-top: 1ex; }
   footer a {
-    color: #FF8D00; }
+    color: #DD5500; }
 
 .login {
   text-align: right;
@@ -113,6 +113,10 @@ footer {
 .pridat_otazku td {
   padding-right: 1ex;
   padding-bottom: 5px; }
+.pridat_otazku textarea {
+  font-family: "Lora", Georgia, "Times New Roman", "DejaVu Serif", serif;
+  font-size: 110%;
+  max-width: 100%; }
 
 input.dobre {
   border: green solid 2px; }
@@ -132,7 +136,7 @@ p.spatne {
   margin-right: 2em; }
 
 .bar, .bar0, .bar1, .bar2, .bar3, .bar4, .bar5, .bar6 {
-  background-color: #FF8D00;
+  background-color: #DD5500;
   width: 10px;
   display: inline-block;
   padding: 0px;

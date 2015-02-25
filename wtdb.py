@@ -65,18 +65,18 @@ class Otazka(db.Entity):
     * typ_otazky: Otevřená, Uzavřená, Hodnota, Vzorec"""
     _table_ = "otazka"
     id = PrimaryKey(int, column="id_otazka", auto=True)
+    ucitel = Required("Ucitel")
     jmeno = Required(unicode, 80)
     typ_otazky = Required(str, 1, sql_type="char")
     obecne_zadani = Required(unicode)
-    spravna_odpoved = Required(unicode, 512)
-    spatna_odpoved1 = Optional(unicode, 512)
-    spatna_odpoved2 = Optional(unicode, 512)
-    spatna_odpoved3 = Optional(unicode, 512)
-    spatna_odpoved4 = Optional(unicode, 512)
-    spatna_odpoved5 = Optional(unicode, 512)
-    spatna_odpoved6 = Optional(unicode, 512)
+    spravna_odpoved = Optional(unicode, 512, nullable=True)
+    spatna_odpoved1 = Optional(unicode, 512, nullable=True)
+    spatna_odpoved2 = Optional(unicode, 512, nullable=True)
+    spatna_odpoved3 = Optional(unicode, 512, nullable=True)
+    spatna_odpoved4 = Optional(unicode, 512, nullable=True)
+    spatna_odpoved5 = Optional(unicode, 512, nullable=True)
+    spatna_odpoved6 = Optional(unicode, 512, nullable=True)
     otazky_testuu = Set("Otazka_testu")
-    ucitel = Required("Ucitel")
 
 
 class Odpoved(db.Entity):

@@ -22,7 +22,7 @@ $total-width: 100%;
 
 
 $zelena: #44A72C ;
-$oranzova: #FF8D00;
+$oranzova: #DD5500;
 
 $font_text: 'Lora', Georgia, "Times New Roman", "DejaVu Serif", serif;
 /*$font_text: "Times New Roman", "DejaVu Serif", serif;*/
@@ -50,6 +50,7 @@ pre {
 body {
     max-width: 960px;
     margin: 1ex auto;
+    overflow: auto;
 }
 #body {
     font-family: $font_text;
@@ -57,7 +58,6 @@ body {
     border: $oranzova solid 3px;
     @include border-radius(15px);
     padding: 1ex 1em;
-    overflow: auto;
 }
 
 header {
@@ -160,6 +160,11 @@ footer {
     td {
         padding-right: 1ex;
         padding-bottom: 5px;
+    }
+    textarea {
+        font-family: $font_text;
+        font-size: 110%;
+        max-width: 100%;
     }
 }
 
