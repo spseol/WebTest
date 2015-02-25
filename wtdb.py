@@ -66,9 +66,8 @@ class Otazka(db.Entity):
     _table_ = "otazka"
     id = PrimaryKey(int, column="id_otazka", auto=True)
     jmeno = Required(unicode, 80)
-    otazky_testuu = Set("Otazka_testu")
-    obecne_zadani = Required(unicode)
     typ_otazky = Required(str, 1, sql_type="char")
+    obecne_zadani = Required(unicode)
     spravna_odpoved = Required(unicode, 512)
     spatna_odpoved1 = Optional(unicode, 512)
     spatna_odpoved2 = Optional(unicode, 512)
@@ -76,6 +75,7 @@ class Otazka(db.Entity):
     spatna_odpoved4 = Optional(unicode, 512)
     spatna_odpoved5 = Optional(unicode, 512)
     spatna_odpoved6 = Optional(unicode, 512)
+    otazky_testuu = Set("Otazka_testu")
     ucitel = Required("Ucitel")
 
 

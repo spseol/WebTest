@@ -8,7 +8,7 @@
 setopt extendedglob # **/*.txt
 setopt re_match_pcre 
 
-if [ $1 = '-h' ]; then
+if [[ $1 == '-h' ]]; then
     cat <<EOF 
     
     $(basename $0) [XID]

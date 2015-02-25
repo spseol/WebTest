@@ -2,13 +2,13 @@
 
 {% block menu %}
   <ul>
-    <li><a href="#">Výsledky</a></li>
+    <li><a href="{{url_for('vysledky')}}">Výsledky</a></li>
     <li>|</li>
-    <li><a href="#">Otázky</a></li>
-    <li><a href="#">Testy</a></li>
+    <li><a href="{{url_for('otazky')}}">Otázky</a></li>
+    <li><a href="{{url_for('testy')}}">Testy</a></li>
     <li>|</li>
-    <li><a href="#">Přidat otázku</a></li>
-    <li><a href="#">Vytvořit test</a></li>
+    <li><a href="{{url_for('pridat_otazku')}}">Přidat otázku</a></li>
+    <li><a href="{{url_for('pridat_test')}}">Vytvořit test</a></li>
     <li><a href="{{url_for('upload')}}">Upload</a></li>
   </ul>
 {% endblock menu %}

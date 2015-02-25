@@ -9,9 +9,11 @@
 
     <ul>
     {% if "student" in session %}  
-      <li>Jsi přihlášen jako <strong>student: {{session.student}}</strong>.</li>
+      <li>Jsi přihlášen jako <strong>student: {{jmeno}} -- {{session.student}}
+                                                                </strong>.</li>
     {% elif "ucitel" in session %}  
-      <li>Jsi přihlášen jako <strong>učitel: {{session.ucitel}}</strong>.</li>
+      <li>Jsi přihlášen jako <strong>učitel: {{jmeno}} -- {{session.ucitel}}
+                                                                </strong>.</li>
     {% endif %}  
       <li>Přihlášení je platné do zavření prohlížeče.</li> 
       <li>Pokud se rozhodneš tento web opustit prosím 
@@ -21,12 +23,12 @@
 
     <p class="logout"> 
       <strong><a href="{{url_for('logout')}}">Odhlásit se</a></strong>;
-      <strong><a href="{{url_for('index')}}">Hlavní strana</strong>
+      <strong><a href="{{url_for('index')}}">Hlavní strana</a></strong>
     </p>
 
   {% else %}
 
-    <h1>Přihlášení</h1>
+    <h1>Přihlaste se prosím</h1>
 
     <p><strong style="color:red;">
     {% if spatne is defined %}

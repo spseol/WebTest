@@ -13,16 +13,15 @@
 
     <p>
     <input type="radio" name="typ" value="otazky" checked="checked" /> 
-    Chci vložit jen testové otázky <br />
+    Chci vložit jen testové otázky.<br />
     <input type="radio" name="typ" value="test" />
-    Chci vložit celý test a označit tento test jménem: 
-    <input type="input" name="jmeno_testu" />
+    Chci z těchto testových otázek vytvořit test a označit ho jménem: 
+    <input type="input" name="jmeno_testu" value="Test 123" />.
     </p>
 
   <p>
-  Vyberte soubor: <input type="file" name="datafile" size="40"><br />
-  <br />
-  Odešlete soubor:<input type="submit" value="Odeslat">
+  Vybrat soubor s definicí otázek: <input type="file" name="datafile" /><br />
+  <input type="submit" name="odeslat" value="Odeslat" />
   </p>
   </form>
 

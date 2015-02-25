@@ -147,12 +147,42 @@ footer {
 .inout {
     float: right;
     text-align: right;
-    margin-right
+    a {
+        text-decoration: overline;
+    }
     a:hover {
         text-decoration: underline;
     }
     
 }
+
+.pridat_otazku  {
+    td {
+        padding-right: 1ex;
+        padding-bottom: 5px;
+    }
+}
+
+input.dobre {
+    border: green solid 2px;
+}
+input.spatne { 
+    border: red solid 2px;
+}
+
+p.spatne {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+    font-size: 150%;
+}
+
+.odeslat {
+    text-align: right;
+    margin: 1em;
+    margin-right: 2em;
+}
+
 
 .bar {
     background-color: $oranzova;
@@ -168,6 +198,8 @@ footer {
 .bar4 { @extend .bar; height: 30px; }
 .bar5 { @extend .bar; height: 17px; }
 .bar6 { @extend .bar; height: 50px; }
+
+
 
 .clear {
     clear: both;
