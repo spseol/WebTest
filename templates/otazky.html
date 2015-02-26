@@ -1,4 +1,18 @@
 {% extends "ucitel.html" %}
 
 {% block main %}
+<h1>Otázky</h1>
+
+<ul>
+{%for id, ucitel_login, ucitel_jmeno, jmeno, zadani in otazky%}
+  <li>
+    <strong>{{jmeno}}</strong>: {{zadani[:80]}}<br />
+    <a href="#">{{ucitel_jmeno}}</a>,
+    <a href="#" class="zobrazit">zobrazit</a>
+    <a href="#" class="editovat">editovat</a>
+    <a href="#" class="smazat"  >smazat</a>
+  </li>
+{%endfor%}
+</ul>
+
 {% endblock main %}

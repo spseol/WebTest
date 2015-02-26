@@ -14,7 +14,7 @@ from flask import (Flask, render_template,
 from werkzeug.routing import BaseConverter
 # from typogrify.filters import typogrify
 # from markdown import markdown
-from pony.orm import (sql_debug, get, db_session)
+from pony.orm import (sql_debug, get, select, db_session)
 # from datetime import datetime
 import os
 import functools
@@ -24,7 +24,7 @@ from wtdb import Student, Ucitel, Otazka
 import sys
 reload(sys)  # to enable `setdefaultencoding` again
 sys.setdefaultencoding("UTF-8")
-app = Flask(__name__)
+app = Flask('WebTest')
 app.secret_key = os.urandom(24)
 
 
@@ -141,9 +141,13 @@ def vysledky():
 
 @app.route('/otazky/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
+@db_session
 def otazky():
+    #: Zobrazí všechny otázky a nabídne příslušné akce
     if request.method == 'GET':
-        return render_template('otazky.html')
+        otazky = select((o.id, o.ucitel.login, o.ucitel.jmeno, o.jmeno,
+                        o.obecne_zadani) for o in Otazka)
+        return render_template('otazky.html', otazky=otazky)
     elif request.method == 'POST':
         return redirect(url_for('/'))
 
