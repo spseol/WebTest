@@ -124,11 +124,14 @@ input.dobre {
 input.spatne {
   border: red solid 2px; }
 
-p.spatne {
+p.spatne, p.dobre {
   color: red;
   font-weight: bold;
   text-align: center;
   font-size: 150%; }
+
+p.dobre {
+  color: green; }
 
 .odeslat {
   text-align: right;

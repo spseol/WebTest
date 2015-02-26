@@ -163,7 +163,11 @@ def pridat_otazku():
     r = request
     r.f = r.form
     if r.method == 'GET':
-        return render_template('pridat_otazku.html')
+        if 'ok' in r.args:
+            zprava = 'Proběhlo vložení otázky "' + r.args['ok'] + '".'
+            return render_template('pridat_otazku.html', vlozeno=zprava)
+        else:
+            return render_template('pridat_otazku.html')
     elif r.method == 'POST':
         if r.f['jmeno'] and r.f['typ_otazky'] and r.f['obecne_zadani']:
             if r.f['typ_otazky'] == 'O':
@@ -173,7 +177,7 @@ def pridat_otazku():
                            jmeno=r.f['jmeno'],
                            typ_otazky='O',
                            obecne_zadani=r.f['obecne_zadani'])
-                return redirect(url_for('pridat_otazku'))
+                return redirect(url_for('pridat_otazku', ok=r.f['jmeno']))
             elif r.f['typ_otazky'] == 'C' and r.f['spravna_odpoved']:
                 with db_session:
                     Otazka(ucitel=get(u for u in Ucitel
@@ -182,7 +186,7 @@ def pridat_otazku():
                            typ_otazky='C',
                            obecne_zadani=r.f['obecne_zadani'],
                            spravna_odpoved=r.f['spravna_odpoved'])
-                return redirect(url_for('pridat_otazku'))
+                return redirect(url_for('pridat_otazku', ok=r.f['jmeno']))
             elif r.f['typ_otazky'] == 'U' and r.f['spravna_odpoved']:
                 # Musím dát všechny špatné odpovědi těsně za sebe
                 KLICE = ('spatna_odpoved1', 'spatna_odpoved2',
@@ -200,7 +204,7 @@ def pridat_otazku():
                 # Chce to alespoň jednu špatnou odpověď
                 if len(parametry) < 1:
                     zprava = "... alespoň jednu špatnou odpověď!"
-                    return render_template('pridat_otazku.html', zprava=zprava)
+                    return render_template('pridat_otazku.html', chyba=zprava)
                 with db_session:
                     Otazka(ucitel=get(u for u in Ucitel
                                       if u.login == session['ucitel']),
@@ -209,14 +213,14 @@ def pridat_otazku():
                            obecne_zadani=r.f['obecne_zadani'],
                            spravna_odpoved=r.f['spravna_odpoved'],
                            **parametry)
-                return redirect(url_for('pridat_otazku'))
+                return redirect(url_for('pridat_otazku', ok=r.f['jmeno']))
             else:
                 zprava = "U číselné otázky musí být zadán správná odpověď."\
                          " U uzavrené otázky i špatná odpověď."
-                return render_template('pridat_otazku.html', zprava=zprava)
+                return render_template('pridat_otazku.html', chyba=zprava)
         else:
             zprava = "Nebyla zadána všechna požadovaná data."
-            return render_template('pridat_otazku.html', zprava=zprava)
+            return render_template('pridat_otazku.html', chyba=zprava)
 
 
 @app.route('/pridat/test/', methods=['GET', 'POST'])
@@ -236,6 +240,12 @@ def upload():
     elif request.method == 'POST':
         if 'datafile' in request.files:
             f = request.files['datafile']
+            while True:
+                radek = f.readline()
+                if not radek:
+                    break
+                radek = radek.strip().decode('UTF-8')
+                print(type(radek))
             print(f.readline().strip())
             print(f.readline().strip())
             f.close()

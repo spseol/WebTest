@@ -3,11 +3,14 @@
 {% block main %}
 <h1>Přidat otázku</h1>
 
-{% if zprava is defined %}
-<p class="spatne">{{zprava}}</p>
+{% if chyba is defined %}
+<p class="spatne">{{chyba}}</p>
+{% endif %}
+{% if vlozeno is defined %}
+<p class="dobre">{{vlozeno}}</p>
 {% endif %}
 
-<form method="post">
+<form method="post" action="{{url_for('pridat_otazku')}}">
   <p><strong>Nadpis/Jméno otázky:</strong><br />
   <input type="text" name="jmeno" size="80" value="{{request.form.jmeno}}"/>
   </p>

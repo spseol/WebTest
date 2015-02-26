@@ -181,6 +181,10 @@ p.spatne {
     text-align: center;
     font-size: 150%;
 }
+p.dobre {
+    @extend p.spatne;
+    color: green;
+}
 
 .odeslat {
     text-align: right;
