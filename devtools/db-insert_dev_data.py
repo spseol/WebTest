@@ -25,7 +25,7 @@ with db_session:
             hash=crypt('jan',   '$1$8DAwyao9'))
 
     Ucitel(login="bob",
-           jmeno="Bo Zadavatel",
+           jmeno="Bob Zadavatel",
            hash=crypt('bob',    '$1$3da8Yoo9'))
 
     Ucitel(login="emil",

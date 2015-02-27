@@ -3,15 +3,20 @@
 {% block main %}
 <h1>Otázky</h1>
 
-<ul>
+<ul class="seznam_otazek">
 {%for id, ucitel_login, ucitel_jmeno, jmeno, zadani in otazky%}
-  <li>
-    <strong>{{jmeno}}</strong>: {{zadani[:80]}}<br />
-    <a href="#">{{ucitel_jmeno}}</a>,
-    <a href="#" class="zobrazit">zobrazit</a>
-    <a href="#" class="editovat">editovat</a>
-    <a href="#" class="smazat"  >smazat</a>
-  </li>
+  <li><section>
+    <header>
+      <h2>{{jmeno}}</h2>
+      <span class="odkazy">
+        <a href="{{url_for('otazky_ucitel', login=ucitel_login)}}">{{ucitel_jmeno}}</a>
+        <a href="{{url_for('otazka_zobrazit', id=id)}}">zobrazit</a>
+        <a href="{{url_for('otazka_editovat', id=id)}}">editovat</a>
+        <a href="{{url_for('otazka_smazat', id=id)}}">smazat</a></br>
+      </span>
+    </header>
+    <p>{{zadani[:80]}}</p>
+  </section></li>
 {%endfor%}
 </ul>
 

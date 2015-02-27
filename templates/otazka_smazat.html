@@ -1,0 +1,13 @@
+{% extends "otazka.html" %}
+
+{%block nadpis%}Smazat otázku?{%endblock%}
+
+{%block info%}
+<form method="post">
+  <p class="anone">
+  <input type="submit" name="ano" value="Ano" />
+  <input type="submit" name="ne" value="Ne" />
+  </p>
+  <hr />
+</form>
+{%endblock%}

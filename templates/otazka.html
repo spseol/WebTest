@@ -1,0 +1,53 @@
+{% extends "ucitel.html" %}
+
+{% block main %}
+<h1>{%block nadpis%}Zobrazit otázku{%endblock nadpis%}</h1>
+
+
+{%block info%}{%endblock%}
+
+  <section class="otazka">
+    <header>
+      <h2>{{otazka.jmeno}}</h2>
+      <span class="odkazy">
+        <a href="{{url_for('otazky_ucitel', login=otazka.ucitel.login)}}">
+          {{otazka.ucitel.jmeno}}</a>
+        <a href="{{url_for('otazka_zobrazit', id=otazka.id)}}">zobrazit</a>
+        <a href="{{url_for('otazka_editovat', id=otazka.id)}}">editovat</a>
+        <a href="{{url_for('otazka_smazat', id=otazka.id)}}">smazat</a></br>
+      </span>
+    </header>
+
+    <div class="rendruj">
+    {% block rendruj %}
+      {{rendruj(otazka.obecne_zadani)}}
+    {% endblock rendruj %}
+    
+    <p style="margin-top: 2em;">
+    {%if otazka.spravna_odpoved%}
+      <span class="spravna_odpoved">{{otazka.spravna_odpoved}}</span>
+    {%endif%}
+    {%if otazka.spatna_odpoved1%}
+      | <span class="spatna_odpoved">{{otazka.spatna_odpoved1}}</span>
+    {%endif%}
+    {%if otazka.spatna_odpoved2%}
+      | <span class="spatna_odpoved">{{otazka.spatna_odpoved2}}</span>
+    {%endif%}
+    {%if otazka.spatna_odpoved3%}
+      | <span class="spatna_odpoved">{{otazka.spatna_odpoved3}}</span>
+    {%endif%}
+    {%if otazka.spatna_odpoved4%}
+      | <span class="spatna_odpoved">{{otazka.spatna_odpoved4}}</span>
+    {%endif%}
+    {%if otazka.spatna_odpoved5%}
+      | <span class="spatna_odpoved">{{otazka.spatna_odpoved5}}</span>
+    {%endif%}
+    {%if otazka.spatna_odpoved6%}
+      | <span class="spatna_odpoved">{{otazka.spatna_odpoved6}}</span>
+    {%endif%}
+    </p>
+    </div>
+
+  </section>
+
+{% endblock main %}

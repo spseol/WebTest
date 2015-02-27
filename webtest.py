@@ -8,12 +8,11 @@
 from __future__ import division, print_function, unicode_literals
 ############################################################################
 
-from flask import (Flask, render_template,
-                   # Markup,
+from flask import (Flask, render_template, Markup,
                    request, url_for, redirect, session, )
 from werkzeug.routing import BaseConverter
-# from typogrify.filters import typogrify
-# from markdown import markdown
+from typogrify.filters import typogrify
+from markdown import markdown
 from pony.orm import (sql_debug, get, select, db_session)
 # from datetime import datetime
 import os
@@ -66,6 +65,8 @@ def pswd_check(pswd, encript):
     return encript == crypt(pswd, salt)
 
 
+def rendruj(m):
+    return Markup(typogrify(markdown(m)))
 ############################################################################
 
 
@@ -147,9 +148,81 @@ def otazky():
     if request.method == 'GET':
         otazky = select((o.id, o.ucitel.login, o.ucitel.jmeno, o.jmeno,
                         o.obecne_zadani) for o in Otazka)
-        return render_template('otazky.html', otazky=otazky)
+        return render_template('otazky.html',
+                               otazky=otazky.order_by(1))
     elif request.method == 'POST':
         return redirect(url_for('/'))
+
+
+@app.route('/otazky/ucitel/<login>', methods=['GET'])
+@prihlasit('ucitel')
+@db_session
+def otazky_ucitel(login):
+    #: Zobrazí všechny otázky jednoho zadávajícího učitele
+    otazky = select((o.id, o.ucitel.login, o.ucitel.jmeno, o.jmeno,
+                    o.obecne_zadani) for o in Otazka
+                    if o.ucitel.login == login)
+    return render_template('otazky.html', otazky=otazky)
+
+
+@app.route('/otazky/zobrazit/<id>', methods=['GET'])
+@prihlasit('ucitel')
+@db_session
+def otazka_zobrazit(id):
+    otazka = Otazka[id]
+    return render_template('otazka.html', otazka=otazka, rendruj=rendruj)
+
+
+@app.route('/otazky/editovat/<id>', methods=['GET', 'POST'])
+@prihlasit('ucitel')
+@db_session
+def otazka_editovat(id):
+    if request.method == 'GET':
+        otazka = Otazka[id]
+        return render_template('otazka_editovat.html',
+                               otazka=otazka, rendruj=rendruj)
+    if request.method == 'POST':
+        r = request
+        r.f = r.form
+        if r.f['jmeno'] and r.f['typ_otazky'] and r.f['obecne_zadani']:
+            if r.f['typ_otazky'] == 'O':
+                otazka = Otazka[id]
+                otazka.ucitel = get(u for u in Ucitel
+                                    if u.login == session['ucitel'])
+                otazka.jmeno = r.f['jmeno']
+                otazka.typ_otazky = 'O'
+                otazka.obecne_zadani = r.f['obecne_zadani']
+                return redirect(url_for('otazky'))
+            elif r.f['typ_otazky'] == 'C' and r.f['spravna_odpoved']:
+                otazka = Otazka[id]
+                otazka.ucitel = get(u for u in Ucitel
+                                    if u.login == session['ucitel'])
+                otazka.jmeno = r.f['jmeno']
+                otazka.typ_otazky = 'C'
+                otazka.obecne_zadani = r.f['obecne_zadani']
+                otazka.spravna_odpoved = r.f['spravna_odpoved']
+                return redirect(url_for('otazky'))
+            # TODO!
+        else:
+            zprava = "Nebyla zadána všechna požadovaná data."
+            otazka = Otazka[id]
+            return render_template('otazka_editovat.html',
+                                   chyba=zprava, otazka=otazka)
+
+
+@app.route('/otazky/smazat/<id>', methods=['GET', 'POST'])
+@prihlasit('ucitel')
+@db_session
+def otazka_smazat(id):
+    #: Zobrazí všechny otázky a nabídne příslušné akce
+    if request.method == 'GET':
+        otazka = Otazka[id]
+        return render_template('otazka_smazat.html',
+                               otazka=otazka, rendruj=rendruj)
+    elif request.method == 'POST':
+        if 'ano' in request.form and request.form['ano'] == 'Ano':
+            Otazka[id].delete()
+        return redirect(url_for('otazky'))
 
 
 @app.route('/testy/', methods=['GET', 'POST'])

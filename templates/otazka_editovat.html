@@ -1,33 +1,32 @@
-{% extends "ucitel.html" %}
+{% extends "otazka.html" %}
 
 {%block mathjax%}{%endblock mathjax%}
 
-{% block main %}
-<h1>Přidat otázku</h1>
+{%block nadpis%}Editovat otázku{%endblock nadpis%}
+
+
+{% block rendruj %}
 
 {% if chyba is defined %}
 <p class="spatne">{{chyba}}</p>
 {% endif %}
-{% if vlozeno is defined %}
-<p class="dobre">{{vlozeno}}</p>
-{% endif %}
-
-<form method="post" action="{{url_for('pridat_otazku')}}">
+  
+<form method="post" action="{{url_for('otazka_editovat', id=otazka.id)}}">
   <p><strong>Nadpis/Jméno otázky:</strong><br />
   <input type="text" name="jmeno" size="80" 
 {#         autocomplete="off" #}
-         value="{{request.form.jmeno}}"/>
+         value="{{otazka.jmeno}}"/>
   </p>
   <table class="pridat_otazku">
     <tr>
       <td><strong>Typ otázky:</strong></td> 
       <td>
-        {%if request.form.typ_otazky is defined %}
-        {%  if request.form.typ_otazky == "O" %}
+        {%if otazka.typ_otazky is defined %}
+        {%  if otazka.typ_otazky == "O" %}
         {%    set o = 'selected="selected"' %}
-        {%  elif request.form.typ_otazky == "U" %}
+        {%  elif otazka.typ_otazky == "U" %}
         {%    set u = 'selected="selected"' %}
-        {%  elif request.form.typ_otazky == "C" %}
+        {%  elif otazka.typ_otazky == "C" %}
         {%    set c = 'selected="selected"' %}
         {%  endif %}
         {%endif %}
@@ -41,47 +40,50 @@
   </p>
     <tr>
       <td style="vertical-align: middle;"><strong>Zadání:</strong></td>
-      <td><textarea name="obecne_zadani" rows="15" cols="40">{{request.form.obecne_zadani}}</textarea></td>
+      <td><textarea name="obecne_zadani" rows="15" cols="40">{{otazka.obecne_zadani}}</textarea></td>
     </tr>
     <tr>
       <td><strong>Správná odpověď:</strong></td>
       <td><input class="dobre" type="text" name="spravna_odpoved" size="60" 
-                 value="{{request.form.spravna_odpoved}}" /></td>
+                 value="{{otazka.spravna_odpoved}}" /></td>
     </tr>
     <tr>
       <td><strong>Špatná odpověď I:</strong></td>
       <td><input class="spatne" type="text" name="spatna_odpoved1" size="60" 
-                 value="{{request.form.spatna_odpoved1}}" /></td>
+                 value="{{otazka.spatna_odpoved1}}" /></td>
     </tr>
     <tr>
       <td><strong>Špatná odpověď II:</strong></td>
       <td><input class="spatne" type="text" name="spatna_odpoved2" size="60"
-                 value="{{request.form.spatna_odpoved2}}" /></td>
+                 value="{{otazka.spatna_odpoved2}}" /></td>
     </tr>
     <tr>
       <td><strong>Špatná odpověď III:</strong></td>
       <td><input class="spatne" type="text" name="spatna_odpoved3" size="60"
-                 value="{{request.form.spatna_odpoved3}}" /></td>
+                 value="{{otazka.spatna_odpoved3}}" /></td>
     </tr>
     <tr>
       <td><strong>Špatná odpověď VI:</strong></td>
       <td><input class="spatne" type="text" name="spatna_odpoved4" size="60"
-                 value="{{request.form.spatna_odpoved4}}" /></td>
+                 value="{{otazka.spatna_odpoved4}}" /></td>
     </tr>
     <tr>
       <td><strong>Špatná odpověď V:</strong></td>
       <td><input class="spatne" type="text" name="spatna_odpoved5" size="60"
-                 value="{{request.form.spatna_odpoved5}}" /></td>
+                 value="{{otazka.spatna_odpoved5}}" /></td>
     </tr>
     <tr>
       <td><strong>Špatná odpověď VI:</strong></td>
       <td><input class="spatne" type="text" name="spatna_odpoved6" size="60"
-                 value="{{request.form.spatna_odpoved6}}" /></td>
+                 value="{{otazka.spatna_odpoved6}}" /></td>
     </tr>
   </table>
 
   <p class="odeslat"> 
-  <input type="submit" name="vlozit" value="Vložit otázku"/> </p>
+  <input type="submit" name="ulozit" value="Uložit"/> </p>
 
 </form>
-{% endblock main %}
+  
+  
+{% endblock rendruj %}
+
