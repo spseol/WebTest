@@ -58,6 +58,19 @@ Databáze
 * [ERD]() databáze: <https://editor.ponyorm.com/user/tlapicka/WebTest>.
 * Definice databázových tabulek je v modulu `wtdb.py`.
 
+### Přihlášení do databáze
+
+Přihlášení se děje pomocí modulu `wtconf.py`. Soubor může vypadat takto:
+
+
+    "Přihlašovací údaje k databázy."
+    DB = {
+        "host": "localhost",
+        "user": "webtest",
+        "database": "webtest",
+        "password": "mojetajneheslo"
+    }
+
 Vzhled a CSS
 ------------
 
