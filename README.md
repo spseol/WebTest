@@ -1,4 +1,3 @@
-
 WebTest
 =========
 
@@ -63,6 +62,7 @@ Databáze
 Přihlášení se děje pomocí modulu `wtconf.py`. Soubor může vypadat takto:
 
 
+    # -*- coding: utf8 -*-
     "Přihlašovací údaje k databázy."
     DB = {
         "host": "localhost",
