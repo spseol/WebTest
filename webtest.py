@@ -311,23 +311,62 @@ def pridat_test():
 
 @app.route('/upload/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
+@db_session
 def upload():
+    """upload souboru se zadáním
+    """
+    def add(typ, nazev_otazky, cislo, otazka, spravna, spatna):
+        """zapis do databaze
+        """
+        ucitel = get(u for u in Ucitel if u.login == session['ucitel'])
+        while len(spatna)<7:  # doplni hodnoty NULL do nevyuzitych mist
+            spatna.append('Null')
+
+        spatna = [unicode(i) for i in spatna]   # prevede polozky seznamu na UNICODE
+        Otazka(ucitel=ucitel, jmeno=nazev_otazky, typ_otazky=typ, 
+                obecne_zadani='10', spravna_odpoved=spravna, 
+                spatna_odpoved1=spatna[0], 
+                spatna_odpoved2=spatna[1], 
+                spatna_odpoved3=spatna[2],
+                spatna_odpoved4=spatna[3],
+                spatna_odpoved5=spatna[4],
+                spatna_odpoved6=spatna[5]) # Obecne_zadani nastaveno perma na 10
+        
     if request.method == 'GET':
         return render_template('upload.html')
     elif request.method == 'POST':
         if 'datafile' in request.files:
-            f = request.files['datafile']
-            while True:
-                radek = f.readline()
-                if not radek:
-                    break
-                radek = radek.strip().decode('UTF-8')
-                print(type(radek))
-            print(f.readline().strip())
-            print(f.readline().strip())
-            f.close()
+            fil = request.files['datafile']
+            typ = cislo = nazev_otazky =  otazka = spravna = ""
+            spatna = []  # seznam spatnych odpovedi
+            for line in fil:
+                radek = line.strip().decode('UTF-8') 
+                
+                if line != '\n':  # ignoruj prazdne radky
+                    if radek.split()[0] == '::date':
+                        datum = " ".join(radek.split()[1:])
+                    elif radek.split()[0] == '::number':
+                        typ = 'Hodnota' 
+                        spravna = " ".join(radek.split()[1:])                    
+                    elif radek.split()[0] == ':+':
+                        spravna = " ".join(radek.split()[1:])
+                    elif radek.split()[0] == ':-':
+                        spatna.append(radek.split()[1:])
+                    elif radek.split()[0] == '::task':
+                        nazev_otazky = " ".join(radek.split()[1:])
+                    elif radek.split()[0] == '::open':
+                        typ = 'Otevrena'
+                    elif radek.split()[0] == '::close':
+                        typ = 'Uzavrena'
+                    else:
+                        otazka = otazka + line
+                else:  # kdyz je mezera(oddeleni otazek), udelej zapis do DB
+                    if nazev_otazky and otazka:  #ignoruj 1.mezeru či  nekor. otazky 
+                        add(typ, nazev_otazky,cislo, otazka, spravna, spatna)
+                    typ = nazev_otazky = cislo = otazka = spravna = "" # vynuluj
+                    spatna = []
+                                       
         return redirect(url_for('upload'))
-
 ############################################################################
 
 
