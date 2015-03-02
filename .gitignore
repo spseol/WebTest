@@ -2,6 +2,7 @@ venv
 wtconf.py
 
 # VIm
+*.*~
 *.swp
 # sass
 .sass-cache
