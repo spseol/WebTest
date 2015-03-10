@@ -225,6 +225,12 @@ p.dobre {
 .clear {
   clear: both; }
 
+/*    Javascript CSS   */
+.j-filterp {
+  text-align: center;
+  margin-top: -1em;
+  margin-bottom: 1em; }
+
 /*@import 'responsive';*/
 
 /*# sourceMappingURL=styles.css.map */

@@ -8,26 +8,26 @@
   <link rel="shortcut icon" 
                      href="{{ url_for('static', filename='favico.png') }}" />
 
-  {%block mathjax%}
-  <script type="text/x-mathjax-config">
+  {% macro mathjaxheader() %}
+    <script type="text/x-mathjax-config">
         MathJax.Hub.Config({tex2jax: {inlineMath: [['\$','\$'], ['\\\\(','\\\\)']]}});
         MathJax.Hub.Config({ TeX: { extensions: ["autobold.js"] }});
         MathJax.Hub.Config({ TeX: { equationNumbers: {autoNumber: "all"} } });
     </script>
-<!--    <script type="text/javascript"                                                      -->
-<!--    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">-->
-<!--    </script>                                                                           -->
     <script type="text/javascript"
       src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
-  {%endblock mathjax%}
+  {% endmacro %}
+  {% macro jqueryheader() %}
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="{{ url_for('static', filename='oujeee.js') }}"></script>
+  {% endmacro %}
 
+  {% block head %}{% endblock %} 
 
   <!--[if IE]>
   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-
-  {% block head %}{% endblock %} 
 </head>
 
 <body><div id="body">

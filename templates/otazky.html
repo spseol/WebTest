@@ -1,9 +1,14 @@
 {% extends "ucitel.html" %}
 
+{% block head %} 
+  {{ mathjaxheader() }}
+  {{ jqueryheader() }}
+{% endblock head %}
+
 {% block main %}
 <h1>Otázky</h1>
 
-<ul class="seznam_otazek">
+<ul class="listfilter seznam_otazek">
 {%for id, ucitel_login, ucitel_jmeno, jmeno, zadani in otazky%}
   <li><section>
     <header>
