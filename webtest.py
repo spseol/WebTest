@@ -14,11 +14,11 @@ from werkzeug.routing import BaseConverter
 from typogrify.filters import typogrify
 from markdown import markdown
 from pony.orm import (sql_debug, get, select, db_session)
-# from datetime import datetime
+import datetime
 import os
 import functools
 from crypt import crypt
-from wtdb import Student, Ucitel, Otazka
+from wtdb import Student, Ucitel, Otazka, Test, Otazka_testu
 
 import sys
 reload(sys)  # to enable `setdefaultencoding` again
@@ -302,11 +302,37 @@ def pridat_otazku():
 
 @app.route('/pridat/test/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
+@db_session
 def pridat_test():
+    """pridat test z již vložených otázek a určit dobu platnosti testu
+    """
     if request.method == 'GET':
-        return render_template('pridat_test.html')
+        otazky = select((o.id, o.ucitel, o.ucitel.jmeno, o.jmeno,
+                         o.obecne_zadani) for o in Otazka)
+        return render_template('pridat_test.html', otazky=otazky.order_by(1))
     elif request.method == 'POST':
-        return redirect(url_for('upload'))
+        value = request.form.getlist('check')
+        nazev_testu = request.form['nazev_testu']
+        print("-------------",type(request.form['datum1']))
+        if not request.form['datum1']:
+            datum_od=(datetime.datetime.now()).strftime("%d.%m.%Y") # dnesni datum
+        if request.form['datum2'] == '':
+            dattum_do="1.1.3000"
+        datum_od=datetime.datetime.strptime(request.form['datum1'], "%d.%m.%Y")
+        datum_do=datetime.datetime.strptime(request.form['datum2'], "%d.%m.%Y")
+        checked=request.form.getlist('check')
+        ucitel=session['ucitel'] 
+        Test(jmeno=nazev_testu, ucitel=get(u for u in Ucitel 
+             if u.login == session['ucitel']) , zobrazeno_od=datum_od, 
+             zobrazeno_do=datum_do)
+        for otazka in checked:
+            select(o.jmeno for o in Otazka).show()
+            Otazka_testu(poradi=0, test=get(u for u in Test 
+                        if u.jmeno == nazev_testu),
+                        otazka=get(o for o in Otazka 
+                        if o.jmeno==otazka))
+
+        return redirect(url_for('pridat_test'))
 
 
 @app.route('/upload/', methods=['GET', 'POST'])
