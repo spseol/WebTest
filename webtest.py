@@ -14,11 +14,11 @@ from werkzeug.routing import BaseConverter
 from typogrify.filters import typogrify
 from markdown import markdown
 from pony.orm import (sql_debug, get, select, db_session)
-# from datetime import datetime
+import datetime
 import os
 import functools
 from crypt import crypt
-from wtdb import Student, Ucitel, Otazka
+from wtdb import Student, Ucitel, Otazka, Test, Otazka_testu
 
 import sys
 reload(sys)  # to enable `setdefaultencoding` again
@@ -302,11 +302,37 @@ def pridat_otazku():
 
 @app.route('/pridat/test/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
+@db_session
 def pridat_test():
+    """pridat test z již vložených otázek a určit dobu platnosti testu
+    """
     if request.method == 'GET':
-        return render_template('pridat_test.html')
+        otazky = select((o.id, o.ucitel, o.ucitel.jmeno, o.jmeno,
+                         o.obecne_zadani) for o in Otazka)
+        return render_template('pridat_test.html', otazky=otazky.order_by(1))
     elif request.method == 'POST':
-        return redirect(url_for('upload'))
+        value = request.form.getlist('check')
+        nazev_testu = request.form['nazev_testu']
+        print("-------------",type(request.form['datum1']))
+        if not request.form['datum1']:
+            datum_od=(datetime.datetime.now()).strftime("%d.%m.%Y") # dnesni datum
+        if request.form['datum2'] == '':
+            dattum_do="1.1.3000"
+        datum_od=datetime.datetime.strptime(request.form['datum1'], "%d.%m.%Y")
+        datum_do=datetime.datetime.strptime(request.form['datum2'], "%d.%m.%Y")
+        checked=request.form.getlist('check')
+        ucitel=session['ucitel'] 
+        Test(jmeno=nazev_testu, ucitel=get(u for u in Ucitel 
+             if u.login == session['ucitel']) , zobrazeno_od=datum_od, 
+             zobrazeno_do=datum_do)
+        for otazka in checked:
+            select(o.jmeno for o in Otazka).show()
+            Otazka_testu(poradi=0, test=get(u for u in Test 
+                        if u.jmeno == nazev_testu),
+                        otazka=get(o for o in Otazka 
+                        if o.jmeno==otazka))
+
+        return redirect(url_for('pridat_test'))
 
 
 @app.route('/upload/', methods=['GET', 'POST'])
@@ -324,14 +350,14 @@ def upload():
 
         spatna = [unicode(i) for i in spatna]   # prevede polozky seznamu na UNICODE
         Otazka(ucitel=ucitel, jmeno=nazev_otazky, typ_otazky=typ, 
-                obecne_zadani='10', spravna_odpoved=spravna, 
+                obecne_zadani=otazka, spravna_odpoved=spravna, 
                 spatna_odpoved1=spatna[0], 
                 spatna_odpoved2=spatna[1], 
                 spatna_odpoved3=spatna[2],
                 spatna_odpoved4=spatna[3],
                 spatna_odpoved5=spatna[4],
-                spatna_odpoved6=spatna[5]) # Obecne_zadani nastaveno perma na 10
-        
+                spatna_odpoved6=spatna[5]) # Obecne_zadani nastaveno perma na 10  
+
     if request.method == 'GET':
         return render_template('upload.html')
     elif request.method == 'POST':
@@ -346,7 +372,7 @@ def upload():
                     if radek.split()[0] == '::date':
                         datum = " ".join(radek.split()[1:])
                     elif radek.split()[0] == '::number':
-                        typ = 'Hodnota' 
+                        typ = 'H' 
                         spravna = " ".join(radek.split()[1:])                    
                     elif radek.split()[0] == ':+':
                         spravna = " ".join(radek.split()[1:])
@@ -355,9 +381,9 @@ def upload():
                     elif radek.split()[0] == '::task':
                         nazev_otazky = " ".join(radek.split()[1:])
                     elif radek.split()[0] == '::open':
-                        typ = 'Otevrena'
+                        typ = 'O'
                     elif radek.split()[0] == '::close':
-                        typ = 'Uzavrena'
+                        typ = 'U'
                     else:
                         otazka = otazka + line
                 else:  # kdyz je mezera(oddeleni otazek), udelej zapis do DB
@@ -365,6 +391,9 @@ def upload():
                         add(typ, nazev_otazky,cislo, otazka, spravna, spatna)
                     typ = nazev_otazky = cislo = otazka = spravna = "" # vynuluj
                     spatna = []
+            if otazka and nazev_otazky:  # kdyz neni test ukoncen mezerou
+                print ("splneno")
+                add(typ, nazev_otazky, cislo, otazka, spravna, spatna)
                                        
         return redirect(url_for('upload'))
 ############################################################################

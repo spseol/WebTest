@@ -225,6 +225,18 @@ p.dobre {
 .clear {
   clear: both; }
 
+table {border-collapse: collapse; border: 1px solid brown; background-color: #FAFAD2;}
+  th {color: brown; border-bottom: 1px solid brown;}
+  th, td {font-size: 12px; text-align: center; padding: 2px 3px 2px 2px;}
+  thead th{text-align: center; color: #FAFAD2; background-color: brown;}
+  thead th:first-child, thead th + th + th {background-color: #C00000; cursor: pointer;}
+  .dnes {color: #FAFAD2; background-color: brown;}
+  .akt {color: #FAFAD2; background-color: red;}
+  td {cursor: pointer;}
+  #content {padding-bottom: 120px;}
+  #main {position: relative;z-index: 1;}
+  input.ukazka {float:right; margin-right: 20px;}
+
 /*@import 'responsive';*/
 
 /*# sourceMappingURL=styles.css.map */
