@@ -9,7 +9,7 @@ from __future__ import division, print_function, unicode_literals
 ############################################################################
 
 from flask import (Flask, render_template, Markup,
-                   request, url_for, redirect, session, flash )
+                   request, url_for, redirect, session)
 from werkzeug.routing import BaseConverter
 from typogrify.filters import typogrify
 from markdown import markdown
@@ -250,13 +250,13 @@ def uprav_test(id_test):
                                               "%d.%m.%Y %H:%M")
         datum_do = datetime.datetime.strptime(platne_do,
                                               "%d.%m.%Y %H:%M")
-        checked = request.form.getlist('check')       
+        checked = request.form.getlist('check')
         # smaz puvodni zaznam test-otazky
         get(u for u in Test if u.id is id_test).delete()
         # vytvor nove zanamy
         Test(jmeno=nazev_testu, ucitel=get(u for u in Ucitel
-                                          if u.login == session['ucitel']),
-            zobrazeno_od=datum_od, zobrazeno_do=datum_do)
+                                           if u.login == session['ucitel']),
+             zobrazeno_od=datum_od, zobrazeno_do=datum_do)
         for otazka in checked:
             Otazka_testu(poradi=0, test=get(u for u in Test
                                             if u.jmeno == nazev_testu),
@@ -287,6 +287,15 @@ def uprav_test(id_test):
                                datum_od=datum_od, datum_do=datum_do,
                                otazku=otazky_all)
 
+@app.route('/testy/<id_testu>/delete', methods=['GET'])
+@prihlasit('ucitel')
+@db_session
+def vymazat_test(id_testu):
+    """Vymaze test
+    """
+    if request.method == 'GET':
+        get(u for u in Test if u.id is id_testu).delete()
+        return redirect(url_for('testy'))
 @app.route('/pridat/otazku/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
 def pridat_otazku():
@@ -369,10 +378,9 @@ def pridat_test():
         platne_od = request.form['datum1'] + " " + request.form['cas_od']
         platne_do = request.form['datum2'] + " " + request.form['cas_do']
         datum_od = datetime.datetime.strptime(platne_od,
-                                          "%d.%m.%Y %H:%M")
+                                              "%d.%m.%Y %H:%M")
         datum_do = datetime.datetime.strptime(platne_do,
-                                          "%d.%m.%Y %H:%M")
-           
+                                              "%d.%m.%Y %H:%M")
         checked = request.form.getlist('check')
         Test(jmeno=nazev_testu, ucitel=get(u for u in Ucitel
                                            if u.login == session['ucitel']),
@@ -382,7 +390,7 @@ def pridat_test():
                                             if u.jmeno == nazev_testu),
                          otazka=get(o for o in Otazka
                                     if o.jmeno == otazka))
-        zprava = 'Vytvořen test "' + nazev_testu + '"' 
+        zprava = 'Vytvořen test "' + nazev_testu + '"'
         otazky = select((o.id, o.ucitel, o.ucitel.jmeno, o.jmeno,
                          o.obecne_zadani) for o in Otazka)
         return render_template('pridat_test.html', zprava=zprava,
