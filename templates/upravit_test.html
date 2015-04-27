@@ -81,14 +81,15 @@
 	{%endfor%}
 	</ul>
 </ul>
-	<input type="submit" value="Upravit"
+	<input type="submit" value="Upravit" name="upravit"
 	style="margin-left:350px; margin-top:5px; width:150px; height:
 	35px;">
+	
+	<input type="submit" value="Smazat" name="smazat"
+	style="margin-left:350px; margin-top:5px; width:150px; height:
+	35px;">
+	
 </form>
-<form action="/testy/{{id}}/delete" method="GET">
-	<input type="submit" value="Smazat" name="Smaz"
-	style="margin-left:350px; margin-top:5px; width:150px; height:
-	35px;">
 
 
 </form>

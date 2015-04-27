@@ -15,17 +15,18 @@ from typogrify.filters import typogrify
 from markdown import markdown
 from pony.orm import (sql_debug, get, select, db_session)
 import datetime
+import time
 import os
 import functools
 from crypt import crypt
-from wtdb import Student, Ucitel, Otazka, Test, Otazka_testu
-
+from wtdb import(Student, Ucitel, Otazka, Test,
+                 Otazka_testu, Odpoved, Vysledek_testu)
+import random
 import sys
 reload(sys)  # to enable `setdefaultencoding` again
 sys.setdefaultencoding("UTF-8")
 app = Flask('WebTest')
 app.secret_key = os.urandom(24)
-
 
 ############################################################################
 class RegexConverter(BaseConverter):
@@ -72,7 +73,7 @@ def rendruj(m):
 @app.route('/')
 def index():
     if 'student' in session:
-        return render_template('student.html')
+        return redirect(url_for('student_testy'))
     elif 'ucitel' in session:
         return render_template('ucitel.html')
     else:
@@ -243,28 +244,34 @@ def uprav_test(id_test):
     """uprava vytvoreneho testu
     """
     if request.method == 'POST':
-        nazev_testu = request.form['nazev_testu']
-        platne_od = request.form['datum1'] + " " + request.form['cas_od']
-        platne_do = request.form['datum2'] + " " + request.form['cas_do']
-        datum_od = datetime.datetime.strptime(platne_od,
-                                              "%d.%m.%Y %H:%M")
-        datum_do = datetime.datetime.strptime(platne_do,
-                                              "%d.%m.%Y %H:%M")
-        checked = request.form.getlist('check')
-        # smaz puvodni zaznam test-otazky
-        get(u for u in Test if u.id is id_test).delete()
-        # vytvor nove zanamy
-        Test(jmeno=nazev_testu, ucitel=get(u for u in Ucitel
-                                           if u.login == session['ucitel']),
-             zobrazeno_od=datum_od, zobrazeno_do=datum_do)
-        for otazka in checked:
-            Otazka_testu(poradi=0, test=get(u for u in Test
-                                            if u.jmeno == nazev_testu),
-                         otazka=get(o for o in Otazka
-                                    if o.jmeno == otazka))
-        zprava = 'Test "' + nazev_testu + '" byl úspěšně upraven'
-        testy = select((u.id, u.jmeno) for u in Test)
-        return render_template('testy.html', zprava=zprava, testy=testy)
+        if 'upravit' in request.form:
+            nazev_testu = request.form['nazev_testu']
+            platne_od = request.form['datum1'] + " " + request.form['cas_od']
+            platne_do = request.form['datum2'] + " " + request.form['cas_do']
+            datum_od = datetime.datetime.strptime(platne_od,
+                                                  "%d.%m.%Y %H:%M")
+            datum_do = datetime.datetime.strptime(platne_do,
+                                                  "%d.%m.%Y %H:%M")
+            checked = request.form.getlist('check')
+            # smaz puvodni zaznam test-otazky
+            get(u for u in Test if u.id is id_test).delete()
+            # vytvor nove zaznamy
+            Test(jmeno=nazev_testu,
+                 ucitel=get(u for u in Ucitel if u.login == session['ucitel']),
+                 zobrazeno_od=datum_od, zobrazeno_do=datum_do)
+            for otazka in checked:
+                Otazka_testu(poradi=0, test=get(u for u in Test
+                                                if u.jmeno == nazev_testu),
+                             otazka=get(o for o in Otazka
+                                        if o.jmeno == otazka))
+            zprava = 'Test "' + nazev_testu + '" byl úspěšně upraven'
+            testy = select((u.id, u.jmeno) for u in Test)
+            return render_template('testy.html', zprava=zprava, testy=testy)
+        if 'smazat' in request.form:
+            get(u for u in Test if u.id is id_test).delete()
+            zprava = 'smazan test "' + request.form['nazev_testu'] + '"'
+            testy = select((u.id, u.jmeno) for u in Test)
+            return render_template('testy.html', zprava=zprava, testy=testy)
     elif request.method == 'GET':
         test = select((u.id, u.jmeno) for u in Test
                       if u.id is id_test)
@@ -287,15 +294,6 @@ def uprav_test(id_test):
                                datum_od=datum_od, datum_do=datum_do,
                                otazku=otazky_all)
 
-@app.route('/testy/<id_testu>/delete', methods=['GET'])
-@prihlasit('ucitel')
-@db_session
-def vymazat_test(id_testu):
-    """Vymaze test
-    """
-    if request.method == 'GET':
-        get(u for u in Test if u.id is id_testu).delete()
-        return redirect(url_for('testy'))
 @app.route('/pridat/otazku/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
 def pridat_otazku():
@@ -456,11 +454,82 @@ def upload():
                     # vynuluj
                     typ = nazev_otazky = cislo = otazka = spravna = ""
                     spatna = []
-
         return redirect(url_for('upload'))
+
+@app.route('/student/testy/', methods=['GET', 'POST'])
+@prihlasit('student')
+@db_session
+def student_testy():
+    if request.method == 'GET':
+        pritomnost = datetime.datetime.strptime(
+            time.strftime("%d.%m.%Y %H:%M"), "%d.%m.%Y %H:%M")
+        testy = select((u.id, u.jmeno, u.zobrazeno_od, u.zobrazeno_do)
+                       for u in Test if (pritomnost >= u.zobrazeno_od and
+                                         pritomnost <= u.zobrazeno_do))
+        return render_template('student.html', testy=testy)
+
+@app.route('/student/testy/<id>', methods=['GET', 'POST'])
+@prihlasit('student')
+@db_session
+def student_zobrazit(id):
+    if request.method == 'GET':
+        shluk_otazek = []
+        otazky_testu = select((u.otazka.id,
+                               u.otazka.typ_otazky,
+                               u.otazka.obecne_zadani,
+                               u.otazka.spravna_odpoved,
+                               u.otazka.spatna_odpoved1,
+                               u.otazka.spatna_odpoved2,
+                               u.otazka.spatna_odpoved3,
+                               u.otazka.spatna_odpoved4,
+                               u.otazka.spatna_odpoved5,
+                               u.otazka.spatna_odpoved6) for u
+                              in Otazka_testu if u.test.id is
+                              id)
+        for ramec in otazky_testu:
+            vysledek = []
+            for clen in ramec[4:]:
+                vysledek.append(clen)
+            random.shuffle(vysledek)
+            vysledek.insert(0, ramec[0])
+            vysledek.insert(1, ramec[1])
+            vysledek.insert(2, ramec[2])
+            vysledek.insert(3, ramec[3])
+            shluk_otazek.append(vysledek)
+        random.shuffle(shluk_otazek)
+
+        Vysledek_testu(student=get(s.id for s in Student
+                                   if s.login == session[b'student']),
+                       test=get(u.id for u in Test if u.id is id),
+                       cas_zahajeni=(datetime.datetime.now()).
+                       strftime("%d.%m.%Y %H:%M"))
+        return render_template('student_testy.html',
+                               otazka_testu=shluk_otazek)
+    elif request.method == 'POST':
+        otazky_testu = select(u.otazka.obecne_zadani for u in Otazka_testu
+                              if u.test.id is id)
+        print('------------------------------------')
+        checked = request.form
+        for ch in checked:
+            zadani = select((u.obecne_zadani, u.spravna_odpoved)
+                            for u in Otazka if u.id is ch).get()
+            print (zadani[0])
+            print (zadani[1])
+            konk_odpoved = request.form.get("%s" % ch)
+            idcko = select(u.id for u in Otazka_testu if
+                           u.otazka.id is ch).get()
+            print (idcko[0])
+            select(u.id for u in Vysledek_testu 
+                   if u.student.login == session['student'] and u.test.id is
+                   id).show()
+            Odpoved(konkretni_zadani=zadani[0],
+                    ocekavana_odpoved=zadani[1],
+                    konkretni_odpoved=konk_odpoved,
+                    vysledek_testu=1,
+                    otazka_testu=idcko)
+        print ('---------------------------')
+        return redirect(url_for('student_testy'))
 ############################################################################
-
-
 if __name__ == '__main__':
     sql_debug(True)
     OPT = {'debug': True}
