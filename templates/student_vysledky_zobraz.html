@@ -1,0 +1,17 @@
+{% extends "ucitel.html" %}
+
+
+{% block main %}
+
+{% for konk_zadani, ocek, konk_odpov in otazky %}
+<strong color="green">Zadani:</strong> {{konk_zadani}} </br>
+<strong>Ocekavana odpoved:</strong> {{ocek}} <br>
+<strong>Odpoved student:</strong> 
+{% if ocek == konk_odpov %} <font
+	color="green"><strong>{{konk_odpov}}</strong></font>
+{% else %} {{konk_odpov}}
+{% endif %} <br>
+<br>
+
+{% endfor %}
+{% endblock %}

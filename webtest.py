@@ -133,13 +133,43 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/vysledky/', methods=['GET', 'POST'])
+@app.route('/vysledky/', methods=['GET'])
 @prihlasit('ucitel')
+@db_session
 def vysledky():
     if request.method == 'GET':
-        return render_template('vysledky.html')
-    elif request.method == 'POST':
-        return redirect(url_for('/'))
+        seznam_testu = select((u.jmeno, u.id) for u in Test)
+        return render_template('vysledky.html',
+                               seznam_testu=seznam_testu)
+
+
+@app.route('/vysledky/<id>', methods=['GET'])
+@prihlasit('ucitel')
+@db_session
+def vypracovan_testi(id):
+    """seznam uzivatelu, kteri vyplnili test
+    """
+    if request.method == 'GET':
+        nazev_testu = get(u.jmeno for u in Test if u.id is id)
+        seznam_zaku = select((u.student.jmeno, u.id, u.cas_ukonceni) for u in
+                             Vysledek_testu if u.test.id is id)
+        return render_template('vypracovane_testy.html',
+                               seznam_zaku=seznam_zaku,
+                               nazev_testu=nazev_testu)
+
+
+@app.route('/vysledky/zobraz/<id>', methods=['GET'])
+@prihlasit('ucitel')
+@db_session
+def zobraz_test_studenta(id):
+    """zobrazi obsah vyplneneho testu studenta
+    """
+    if request.method == 'GET':
+        otazky = select((u.konkretni_zadani, u.ocekavana_odpoved,
+                        u.konkretni_odpoved) for u in Odpoved if
+                        u.vysledek_testu.id is id)[:]
+        return render_template('student_vysledky_zobraz.html',
+                               otazky=otazky)
 
 
 @app.route('/otazky/', methods=['GET', 'POST'])
@@ -347,12 +377,15 @@ def pridat_otazku():
                     zprava = "... alespoň jednu špatnou odpověď!"
                     return render_template('pridat_otazku.html', chyba=zprava)
                 with db_session:
+                    spravna_odpoved = r.f['spravna_odpoved']
+                    if r.f['spravna_odpoved'] == '':
+                        spravna_odpoved = 'Nespecifikovano'
                     Otazka(ucitel=get(u for u in Ucitel
                                       if u.login == session['ucitel']),
                            jmeno=r.f['jmeno'],
                            typ_otazky='U',
                            obecne_zadani=r.f['obecne_zadani'],
-                           spravna_odpoved=r.f['spravna_odpoved'],
+                           spravna_odpoved=spravna_odpoved,
                            **parametry)
                 return redirect(url_for('pridat_otazku', ok=r.f['jmeno']))
             else:
@@ -515,13 +548,13 @@ def student_zobrazit(id):
                                otazka_testu=shluk_otazek)
     elif request.method == 'POST':
         checked = request.form
+        konec_testu = datetime.datetime.now().strftime(
+                           "%d.%m.%Y %H:%M:%S")
         Vysledek_testu(student=get(s.id for s in Student
                                    if s.login == session[b'student']),
                        test=get(u.id for u in Test if u.id is id),
                        cas_zahajeni=zacatek_testu,
-                       cas_ukonceni=datetime.datetime.now().strftime(
-                           "%d.%m.%Y %H:%M:%S"))
-
+                       cas_ukonceni=konec_testu)
         for ch in checked:
             zadani = select((u.obecne_zadani, u.spravna_odpoved)
                             for u in Otazka if u.id is ch).get()
@@ -532,11 +565,17 @@ def student_zobrazit(id):
                         u.otazka.id is ch and u.test.id is id)
             if not idcko:
                 idcko = "Nevyplneno"
-            id_vysledek = select(u.id for u in Vysledek_testu
+            id_vysledek = select(max(u.id) for u in Vysledek_testu
                                  if u.student.login == session['student'] and
                                  u.test.id is id)[:]
+            print ("-------------------", id_vysledek)
+            if len(zadani) < 3:
+                zadani1 = "Nespecifikovano"
+            else:
+                zadani1 = zadani[1]
+
             Odpoved(konkretni_zadani=zadani[0],
-                    ocekavana_odpoved=zadani[1],
+                    ocekavana_odpoved=zadani1,
                     konkretni_odpoved=konk_odpoved,
                     vysledek_testu=id_vysledek[0],
                     otazka_testu=idcko)
@@ -551,6 +590,8 @@ def student_vysledek():
         testy_uzivatele = select((u.test.jmeno, u.cas_ukonceni, u.id) for u in
                                  Vysledek_testu
                                  if u.student.login is session[b'student'])
+        for test in testy_uzivatele:
+            print (testy)
     return render_template('student_vysledky.html',
                            testy_uzivatele=testy_uzivatele)
 

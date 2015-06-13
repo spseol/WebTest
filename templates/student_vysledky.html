@@ -4,7 +4,7 @@
 <h1> Vysledky testu: </h1>
 
 {% for jmeno, cas_ukonceni, id in testy_uzivatele %}
-	{% if cas_ukonceni != None %}
+	{% if cas_ukonceni %}
 	<ul class="seznam_testu">
 		<li><section>
 			<header>
