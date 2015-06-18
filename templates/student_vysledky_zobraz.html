@@ -1,17 +1,45 @@
 {% extends "ucitel.html" %}
+{% block head %}
+	{{mathjaxheader()}}
+{% endblock %}
 
 
 {% block main %}
 
-{% for konk_zadani, ocek, konk_odpov in otazky %}
-<strong color="green">Zadani:</strong> {{konk_zadani}} </br>
-<strong>Ocekavana odpoved:</strong> {{ocek}} <br>
-<strong>Odpoved student:</strong> 
-{% if ocek == konk_odpov %} <font
+{% for konk_zadani, ocek, konk_odpov, typ in otazky %}
+
+{% if konk_odpov != ocek and typ != 'O' %}
+<strong class="vysledek_False">Zadani:</strong> 
+
+{% elif konk_odpov == ocek %}
+<strong class="vysledek_True">Zadani:</strong>
+
+{% else %}
+<strong class="vysledek">Zadani: </strong>
+{% endif %}
+
+{{konk_zadani}}
+<br>
+
+<ul>
+{% if ocek == 'Otevrena otazka'%}
+
+<strong><a style="color:#DD5500">{{ocek}}</a>
+{% else %}
+<li><strong>Ocekavana odpoved: 
+{{ocek}}
+{% endif %}</strong>
+<br>
+
+
+<li><strong>Odpoved studenta:</strong> 
+{% if ocek == konk_odpov and typ == "O"%} <font
 	color="green"><strong>{{konk_odpov}}</strong></font>
 {% else %} {{konk_odpov}}
 {% endif %} <br>
 <br>
-
+</ul>
 {% endfor %}
 {% endblock %}
+
+

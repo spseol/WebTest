@@ -166,8 +166,10 @@ def zobraz_test_studenta(id):
     """
     if request.method == 'GET':
         otazky = select((u.konkretni_zadani, u.ocekavana_odpoved,
-                        u.konkretni_odpoved) for u in Odpoved if
+                        u.konkretni_odpoved,
+                         u.otazka_testu.otazka.typ_otazky) for u in Odpoved if
                         u.vysledek_testu.id is id)[:]
+        print(otazky)
         return render_template('student_vysledky_zobraz.html',
                                otazky=otazky)
 
@@ -331,6 +333,10 @@ def uprav_test(id_test):
 @app.route('/pridat/otazku/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
 def pridat_otazku():
+    """otazka je evidovana do databaze
+        POZN.:  Spravna_odpoved musi byt VZDY uvedena, protoze je v
+                dalsi tabulce tento parametr vyzadovan!!!
+    """
     r = request
     r.f = r.form
     if r.method == 'GET':
@@ -347,7 +353,8 @@ def pridat_otazku():
                                       if u.login == session['ucitel']),
                            jmeno=r.f['jmeno'],
                            typ_otazky='O',
-                           obecne_zadani=r.f['obecne_zadani'])
+                           obecne_zadani=r.f['obecne_zadani'],
+                           spravna_odpoved='Otevrena otazka')
                 return redirect(url_for('pridat_otazku', ok=r.f['jmeno']))
             elif r.f['typ_otazky'] == 'C' and r.f['spravna_odpoved']:
                 with db_session:
@@ -568,9 +575,9 @@ def student_zobrazit(id):
             id_vysledek = select(max(u.id) for u in Vysledek_testu
                                  if u.student.login == session['student'] and
                                  u.test.id is id)[:]
-            print ("-------------------", id_vysledek)
-            if len(zadani) < 3:
-                zadani1 = "Nespecifikovano"
+            # vlozeni
+            if len(zadani) == 1:
+                zadani.append("Nespecifikovano")
             else:
                 zadani1 = zadani[1]
 

@@ -96,6 +96,22 @@ footer {
   footer a {
     color: #DD5500; }
 
+body .vysledek_True{
+  background-color:#3ADF00;
+  border-radius: 5px;
+}
+
+
+body .vysledek_False{
+  background-color:#FF0000 ;
+  border-radius: 5px;
+}
+
+body .vysledek{
+  background-color:#FFBF00 ;
+  border-radius: 5px;
+}
+
 .login {
   text-align: right;
   margin-right: 34.375%;
@@ -193,6 +209,8 @@ p.dobre {
 .anone {
   text-align: center;
   margin-bottom: 2em; }
+
+
 
 .bar, .bar0, .bar1, .bar2, .bar3, .bar4, .bar5, .bar6 {
   background-color: #DD5500;
