@@ -1,4 +1,12 @@
 {% extends "ucitel.html" %}
 
 {% block main %}
+
+<h1>Vysledky testu</h1>
+{% for jmeno, id in seznam_testu %}
+
+<a href='{{id}}'><h4>{{jmeno}}</h4></a>
+
+{% endfor %}
+
 {% endblock main %}

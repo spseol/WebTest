@@ -29,6 +29,8 @@ app = Flask('WebTest')
 app.secret_key = os.urandom(24)
 
 ############################################################################
+
+
 class RegexConverter(BaseConverter):
     "Díky této funci je možné do routovat pomocí regulárních výrazů"
     def __init__(self, url_map, *items):
@@ -131,13 +133,45 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/vysledky/', methods=['GET', 'POST'])
+@app.route('/vysledky/', methods=['GET'])
 @prihlasit('ucitel')
+@db_session
 def vysledky():
     if request.method == 'GET':
-        return render_template('vysledky.html')
-    elif request.method == 'POST':
-        return redirect(url_for('/'))
+        seznam_testu = select((u.jmeno, u.id) for u in Test)
+        return render_template('vysledky.html',
+                               seznam_testu=seznam_testu)
+
+
+@app.route('/vysledky/<id>', methods=['GET'])
+@prihlasit('ucitel')
+@db_session
+def vypracovan_testi(id):
+    """seznam uzivatelu, kteri vyplnili test
+    """
+    if request.method == 'GET':
+        nazev_testu = get(u.jmeno for u in Test if u.id is id)
+        seznam_zaku = select((u.student.jmeno, u.id, u.cas_ukonceni) for u in
+                             Vysledek_testu if u.test.id is id)
+        return render_template('vypracovane_testy.html',
+                               seznam_zaku=seznam_zaku,
+                               nazev_testu=nazev_testu)
+
+
+@app.route('/vysledky/zobraz/<id>', methods=['GET'])
+@prihlasit('ucitel')
+@db_session
+def zobraz_test_studenta(id):
+    """zobrazi obsah vyplneneho testu studenta
+    """
+    if request.method == 'GET':
+        otazky = select((u.konkretni_zadani, u.ocekavana_odpoved,
+                        u.konkretni_odpoved,
+                         u.otazka_testu.otazka.typ_otazky) for u in Odpoved if
+                        u.vysledek_testu.id is id)[:]
+        print(otazky)
+        return render_template('student_vysledky_zobraz.html',
+                               otazky=otazky)
 
 
 @app.route('/otazky/', methods=['GET', 'POST'])
@@ -237,6 +271,7 @@ def testy():
     elif request.method == 'POST':
         return redirect(url_for('/'))
 
+
 @app.route('/testy/<id_test>', methods=['GET', 'POST'])
 @prihlasit('ucitel')
 @db_session
@@ -294,9 +329,14 @@ def uprav_test(id_test):
                                datum_od=datum_od, datum_do=datum_do,
                                otazku=otazky_all)
 
+
 @app.route('/pridat/otazku/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
 def pridat_otazku():
+    """otazka je evidovana do databaze
+        POZN.:  Spravna_odpoved musi byt VZDY uvedena, protoze je v
+                dalsi tabulce tento parametr vyzadovan!!!
+    """
     r = request
     r.f = r.form
     if r.method == 'GET':
@@ -313,7 +353,8 @@ def pridat_otazku():
                                       if u.login == session['ucitel']),
                            jmeno=r.f['jmeno'],
                            typ_otazky='O',
-                           obecne_zadani=r.f['obecne_zadani'])
+                           obecne_zadani=r.f['obecne_zadani'],
+                           spravna_odpoved='Otevrena otazka')
                 return redirect(url_for('pridat_otazku', ok=r.f['jmeno']))
             elif r.f['typ_otazky'] == 'C' and r.f['spravna_odpoved']:
                 with db_session:
@@ -343,12 +384,15 @@ def pridat_otazku():
                     zprava = "... alespoň jednu špatnou odpověď!"
                     return render_template('pridat_otazku.html', chyba=zprava)
                 with db_session:
+                    spravna_odpoved = r.f['spravna_odpoved']
+                    if r.f['spravna_odpoved'] == '':
+                        spravna_odpoved = 'Nespecifikovano'
                     Otazka(ucitel=get(u for u in Ucitel
                                       if u.login == session['ucitel']),
                            jmeno=r.f['jmeno'],
                            typ_otazky='U',
                            obecne_zadani=r.f['obecne_zadani'],
-                           spravna_odpoved=r.f['spravna_odpoved'],
+                           spravna_odpoved=spravna_odpoved,
                            **parametry)
                 return redirect(url_for('pridat_otazku', ok=r.f['jmeno']))
             else:
@@ -393,6 +437,7 @@ def pridat_test():
                          o.obecne_zadani) for o in Otazka)
         return render_template('pridat_test.html', zprava=zprava,
                                otazky=otazky.order_by(1))
+
 
 @app.route('/upload/', methods=['GET', 'POST'])
 @prihlasit('ucitel')
@@ -456,6 +501,7 @@ def upload():
                     spatna = []
         return redirect(url_for('upload'))
 
+
 @app.route('/student/testy/', methods=['GET', 'POST'])
 @prihlasit('student')
 @db_session
@@ -468,11 +514,14 @@ def student_testy():
                                          pritomnost <= u.zobrazeno_do))
         return render_template('student.html', testy=testy)
 
+
 @app.route('/student/testy/<id>', methods=['GET', 'POST'])
 @prihlasit('student')
 @db_session
 def student_zobrazit(id):
     if request.method == 'GET':
+        global zacatek_testu
+        zacatek_testu = (datetime.datetime.now()).strftime("%d.%m.%Y %H:%M:%S")
         shluk_otazek = []
         otazky_testu = select((u.otazka.id,
                                u.otazka.typ_otazky,
@@ -501,34 +550,59 @@ def student_zobrazit(id):
         Vysledek_testu(student=get(s.id for s in Student
                                    if s.login == session[b'student']),
                        test=get(u.id for u in Test if u.id is id),
-                       cas_zahajeni=(datetime.datetime.now()).
-                       strftime("%d.%m.%Y %H:%M"))
+                       cas_zahajeni=zacatek_testu)
         return render_template('student_testy.html',
                                otazka_testu=shluk_otazek)
     elif request.method == 'POST':
-        otazky_testu = select(u.otazka.obecne_zadani for u in Otazka_testu
-                              if u.test.id is id)
-        print('------------------------------------')
         checked = request.form
+        konec_testu = datetime.datetime.now().strftime(
+                           "%d.%m.%Y %H:%M:%S")
+        Vysledek_testu(student=get(s.id for s in Student
+                                   if s.login == session[b'student']),
+                       test=get(u.id for u in Test if u.id is id),
+                       cas_zahajeni=zacatek_testu,
+                       cas_ukonceni=konec_testu)
         for ch in checked:
             zadani = select((u.obecne_zadani, u.spravna_odpoved)
                             for u in Otazka if u.id is ch).get()
-            print (zadani[0])
-            print (zadani[1])
             konk_odpoved = request.form.get("%s" % ch)
-            idcko = select(u.id for u in Otazka_testu if
-                           u.otazka.id is ch).get()
-            print (idcko[0])
-            select(u.id for u in Vysledek_testu 
-                   if u.student.login == session['student'] and u.test.id is
-                   id).show()
+            if not konk_odpoved:
+                konk_odpoved = "Nevyplneno"
+            idcko = get(u.id for u in Otazka_testu if
+                        u.otazka.id is ch and u.test.id is id)
+            if not idcko:
+                idcko = "Nevyplneno"
+            id_vysledek = select(max(u.id) for u in Vysledek_testu
+                                 if u.student.login == session['student'] and
+                                 u.test.id is id)[:]
+            # vlozeni
+            if len(zadani) == 1:
+                zadani.append("Nespecifikovano")
+            else:
+                zadani1 = zadani[1]
+
             Odpoved(konkretni_zadani=zadani[0],
-                    ocekavana_odpoved=zadani[1],
+                    ocekavana_odpoved=zadani1,
                     konkretni_odpoved=konk_odpoved,
-                    vysledek_testu=1,
+                    vysledek_testu=id_vysledek[0],
                     otazka_testu=idcko)
-        print ('---------------------------')
         return redirect(url_for('student_testy'))
+
+
+@app.route('/student/vysledky/')
+@prihlasit('student')
+@db_session
+def student_vysledek():
+    if request.method == 'GET':
+        testy_uzivatele = select((u.test.jmeno, u.cas_ukonceni, u.id) for u in
+                                 Vysledek_testu
+                                 if u.student.login is session[b'student'])
+        for test in testy_uzivatele:
+            print (testy)
+    return render_template('student_vysledky.html',
+                           testy_uzivatele=testy_uzivatele)
+
+
 ############################################################################
 if __name__ == '__main__':
     sql_debug(True)

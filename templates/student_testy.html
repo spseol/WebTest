@@ -24,11 +24,15 @@ src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorM
 <li>{{x[2]}}</li>
 {% if x[1]== 'U' %}
 	{% for z in x[3:] %}
-		{% if z != 'Null' %}
+		{% if z != '' %}
 		<input type="radio" name="{{x[0]}}" value="{{z}}">{{z}}
 			<br />
 		{% endif %}
 	{% endfor %}
+
+	<input type="radio" name="{{x[0]}}" value="Nevyplneno"
+	style="display:none" checked />
+
 	<br />
 {% endif %}
 
