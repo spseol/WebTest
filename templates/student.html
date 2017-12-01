@@ -2,8 +2,23 @@
 
 {% block menu %}
   <ul>
-    <li><a href="#">Testy</a></li>
+    <li><a href="{{url_for('student_testy')}}">Testy</a></li>
     <li>|</li>
-    <li><a href="#">Výsledky</a></li>
+    <li><a href="{{url_for('student_vysledek')}}">Výsledky</a></li>
   </ul>
-{% endblock menu %}
+	{% endblock menu %}
+
+
+{% block main %}
+<h1>Dostupne testy:</h1>
+<ul class="seznam_testu">
+{%for id, jmeno, zobrazeno_od, zobrazeno_do in testy %}
+	<li><section>
+		<header>
+			<a href={{id}} style="text-decoration:None;"><h4>{{jmeno}}</h4></a>
+		</header>
+	</section></li>
+{%endfor%}
+</ul>
+				
+{% endblock main %}

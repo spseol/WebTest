@@ -1,0 +1,54 @@
+{% extends "student.html" %}
+
+{% block head %}
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'],
+['\\(','\\)']]}});</script>
+
+<script type="text/javascript"
+src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+{% endblock %}
+
+
+{% block main %}
+
+{% if zprava is defined %}
+<p class="dobre"> {{zprava}} </p>
+{% endif%}
+
+<h1>Otazky testu</h1>
+	
+<form method="POST" action="">
+
+{% for x in otazka_testu %}
+<li>{{x[2]}}</li>
+{% if x[1]== 'U' %}
+	{% for z in x[3:] %}
+		{% if z != '' %}
+		<input type="radio" name="{{x[0]}}" value="{{z}}">{{z}}
+			<br />
+		{% endif %}
+	{% endfor %}
+
+	<input type="radio" name="{{x[0]}}" value="Nevyplneno"
+	style="display:none" checked />
+
+	<br />
+{% endif %}
+
+{% if x[1]== 'O' %}
+<textarea rows="4" cols="50" name="{{x[0]}}"></textarea>
+<br />
+<br />
+ {% endif %}
+
+ {% if x[1]== 'C' %}
+ <input type="text" name="{{x[0]}}"><br />
+ {% endif %}
+
+{% endfor %}
+
+<input type="submit" value="odeslat">
+</form>
+
+{% endblock main %}

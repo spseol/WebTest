@@ -1,0 +1,98 @@
+{% extends "ucitel.html" %}
+
+
+{% block head %}
+  {{ kalendarheader() }}
+  {{ mathjaxheader() }}
+  {{ jqueryheader() }}
+  {% endblock %} 
+
+{% block main %}
+
+<form action="" method="POST">
+	<h1>Upravit test</h1>
+	{%for id, jmeno in test %}
+	<label><h4>Název testu:</h4></label>
+	<input type="text" name="nazev_testu" value='{{jmeno}}'><br>	
+	<div class="kalendar1">
+		<label><h4>Platnost:</h4></label>
+	  <label>od: </label>
+	  <input type="text" placeholder='den.mes.rok'
+	  value='{{datum_od}}' name="datum1" onkeyup="skryjKalendar1()">
+		<img src="/static/kalendar.png" onclick="zobrazSkryjKalendar1(m,r)" 
+	       alt="kalendář" title="kalendář" height="24" width="24" 
+	       style="cursor:pointer; vertical-align:bottom; position:relative; top:-2px;">
+	       <input type='text' placeholder='hod:min'
+	       value='{{cas_od}}'  name='cas_od'><div id="kalendar1"></div>
+	</div>
+
+	<div class="kalendar2">
+	  <label>do: </label>
+	  <input type="text" placeholder='den.mes.rok'
+	  value='{{datum_do}}' name="datum2" onkeyup="skryjKalendar2()"> 
+		<img src="/static/kalendar.png" onclick="zobrazSkryjKalendar2(m,r)"
+	       alt="kalendář" title="kalendář" height="24" width="24"
+	       style="cursor:pointer; vertical-align:bottom; position:relative; top:-2px;"> 
+	       <input type='text' placeholder='hod:min'
+	       value='{{cas_do}}' name='cas_do'><div id="kalendar2"></div>
+	</div>
+
+	
+	<h4>Otázky:</h4>
+
+	<ul class="listfilter seznam_otazek">
+	<h6>Zvolené:</h6>
+	{%for id, ucitel_login, ucitel_jmeno, jmeno, zadani in otazky %}	
+	<li><section>
+			<header>
+				<h2> <input type="checkbox"
+					name="check" checked="checked" value="{{jmeno}}"> {{jmeno}}</h2>
+				<span class="odkazy">
+				<a href="{{url_for('otazky_ucitel', login=ucitel_login)}}">{{ucitel_jmeno}}</a>
+				<a href="{{url_for('otazka_zobrazit', id=id)}}">zobrazit</a>
+				<a href="{{url_for('otazka_editovat', id=id)}}">editovat</a>
+				<a href="{{url_for('otazka_smazat', id=id)}}">smazat</a><br>
+				</span>
+			</header>
+			<p>{{zadani[:80]}}</p>
+		</section></li> 
+	{%endfor%}
+	<br>
+	<h6>Dostupné:</h6>
+		{%for id_all, ucitel_login_all, ucitel_jmeno_all, jmeno_all,
+		zadani_all in otazku %}
+		<li><section>
+				<header>
+					<h2> <input type="checkbox"
+			name="check" value="{{jmeno_all}}"> {{jmeno_all}}</h2>
+				<span class="odkazy">
+				<a href="{{url_for('otazky_ucitel',
+					login=ucitel_login)}}">{{ucitel_jmeno_all}}</a>
+				<a href="{{url_for('otazka_zobrazit',
+					id=id_all)}}">zobrazit</a>
+				<a href="{{url_for('otazka_editovat',
+					id=id_all)}}">editovat</a>
+				<a href="{{url_for('otazka_smazat',
+					id=id_all)}}">smazat</a><br>
+				</span>
+			</header>
+			<p>{{zadani_all[:80]}}</p>
+		</section></li> 
+	{%endfor%}
+	</ul>
+</ul>
+	<input type="submit" value="Upravit" name="upravit"
+	style="margin-left:350px; margin-top:5px; width:150px; height:
+	35px;">
+	
+	<input type="submit" value="Smazat" name="smazat"
+	style="margin-left:350px; margin-top:5px; width:150px; height:
+	35px;">
+	
+</form>
+
+
+</form>
+{%endfor%}
+
+{% endblock main %}

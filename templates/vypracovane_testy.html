@@ -1,0 +1,12 @@
+{% extends "ucitel.html" %}
+
+{% block main %}
+
+<h2>Vypracovane testy {{nazev_testu}} :</h2>
+{% for jmeno_zaka, id, cas in seznam_zaku %}
+{% if cas %}
+	<a href='zobraz/{{id}}'><h4>{{jmeno_zaka}}</h4></a>
+{%endif %}
+{% endfor %}
+
+{% endblock main %}
